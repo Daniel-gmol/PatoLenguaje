@@ -1,0 +1,27 @@
+init
+
+entero dfs(u: entero){
+  val depth: entero = 0;
+  val i, n: entero = 0, n = len(adj[u]); 
+  esperaque(i < n) \/ {
+    if(visited[i] != 1){
+      depth = depth + dfs(i) + 1;
+    }
+  }  
+  [depth]; 
+};
+
+arranca
+  iteraciones = 5;
+
+  val res: entero = dfs(0);
+  dale res;
+
+  res = res * 100 - 50;
+  si (res > 10){
+    dale "Mucho";
+  }
+  sino {
+    dale "Poco";
+  }
+acaba

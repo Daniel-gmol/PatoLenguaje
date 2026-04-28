@@ -1,0 +1,33 @@
+init miPrograma;
+val
+    id1, id2 : entero;
+    id3 : decimal;
+
+nil miFuncion(a: entero, b: decimal) {
+    val
+        x : entero;
+    {
+        x = a + 5 * 2;
+        dale("Hola", x);
+    }
+};
+
+arranca
+{
+    id1 = 10;
+    id2 = -5;
+    id3 = 3.14;
+    
+    miFuncion(id1, id3);
+    
+    si (id1 > id2) {
+        dale("Mayor");
+    } sino {
+        dale("Menor");
+    };
+    
+    esperaque (id1 > 0) \/ {
+        id1 = id1 - 1;
+    };
+}
+acaba

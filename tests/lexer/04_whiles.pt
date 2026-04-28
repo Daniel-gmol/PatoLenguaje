@@ -1,0 +1,8 @@
+init
+val contador: entero;
+arranca
+contador = 0;
+esperaque (contador < 10) \/ {
+    contador = contador + 1;
+}
+acaba

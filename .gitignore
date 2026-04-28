@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+tests-results/
+lextab.py
+parsetab.py
+*.pdf
+*.out

@@ -1,0 +1,6 @@
+init
+arranca
+val x: entero = 501
+dale "Hello world";
+dale entero;
+acaba
