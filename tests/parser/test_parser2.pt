@@ -1,0 +1,35 @@
+init test2;
+
+val iteraciones, res : entero;
+
+entero dfs(u: entero){
+  val depth, i, n : entero; 
+  {
+      depth = 0;
+      i = 0;
+      n = 5;
+      esperaque(i < n) \/ {
+        si(i != 1){
+          depth = depth + dfs(i) + 1;
+        };
+      };
+      regresa depth;
+  }
+};
+
+arranca
+{
+  iteraciones = 5;
+
+  res = dfs(0);
+  dale(res);
+
+  res = res * 100 - 50;
+  si (res > 10){
+    dale("Mucho");
+  }
+  sino {
+    dale("Poco");
+  };
+}
+acaba

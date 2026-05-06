@@ -1,0 +1,62 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "501"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "LETRERO",
+    "value": "Hello world"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

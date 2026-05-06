@@ -1,0 +1,8 @@
+programa error_number;
+
+var
+  x : flotante;
+
+arranca
+  x = 10.5.5; // Will likely parse as CTE_FLOT(10.5) . CTE_ENT(5) which might be an illegal token '.' or something similar, or just fail parser.
+acaba

@@ -1,0 +1,82 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "777"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "100000001"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

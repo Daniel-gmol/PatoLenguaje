@@ -27,6 +27,7 @@ class PatitoLexer(object):
         "esperaque": "MIENTRAS",
         # Misc
         "dale": "ESCRIBE",
+        "regresa": "RETURN",
     }
 
     tokens: list[str] = [
@@ -44,7 +45,7 @@ class PatitoLexer(object):
         "NO",
         "IGUAL",
     ]
-    tokens = list(set(tokens) | set(reserved.values()))
+    tokens = list(set(tokens) | set(reserved.values()))  # CUIDADO
 
     literals: list[str] = [
         ",",
@@ -68,6 +69,7 @@ class PatitoLexer(object):
     # =========================================================================
     def __init__(self) -> None:
         self.lexer: lex.Lexer | None = None
+        self.errors: list[str] = []
 
     def build(self, **kwargs) -> None:
         self.lexer = lex.lex(module=self, **kwargs)
@@ -151,7 +153,9 @@ class PatitoLexer(object):
 
     def t_error(self, t):
         column = self._find_column(t.lexer.lexdata, t)
-        print(f"Error L-{t.lineno} C-{column}: Carácter ilegal '{t.value[0]}'")
+        error_msg = f"Error L-{t.lineno} C-{column}: Carácter ilegal '{t.value[0]}'"
+        # print(error_msg) Debería usar logging o verbose
+        self.errors.append(error_msg)
         t.lexer.skip(1)
 
 

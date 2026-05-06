@@ -1,0 +1,110 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "contador"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "ID",
+    "value": "contador"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "0"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "MIENTRAS",
+    "value": "esperaque"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "contador"
+  },
+  {
+    "type": "MENOR",
+    "value": "<"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "10"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "HAZ",
+    "value": "\\/"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "contador"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "contador"
+  },
+  {
+    "type": "+",
+    "value": "+"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "1"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

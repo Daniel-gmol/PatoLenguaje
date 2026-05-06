@@ -1,0 +1,14 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

@@ -1,0 +1,7 @@
+init error_semi
+
+arranca
+{
+  dale("Hola");
+}
+acaba

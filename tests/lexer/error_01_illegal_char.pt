@@ -1,0 +1,12 @@
+programa error_illegal;
+
+var
+  x : entero;
+  y : flotante;
+
+arranca
+  x = 10;
+  @y = 20.5; 
+  $x = 30;   
+  #y = 40.5;
+acaba

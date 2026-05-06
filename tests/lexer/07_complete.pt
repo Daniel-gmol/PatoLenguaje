@@ -1,14 +1,16 @@
 init
 
 entero dfs(u: entero){
-  val depth: entero = 0;
-  val i, n: entero = 0, n = len(adj[u]); 
+  val depth, i, n: entero; 
+  depth = 0;
+  i = 0;
+  n = len(ajd[u]);
   esperaque(i < n) \/ {
-    if(visited[i] != 1){
+    si(visited[i] != 1){
       depth = depth + dfs(i) + 1;
     }
   }  
-  [depth]; 
+  regresa depth;
 };
 
 arranca

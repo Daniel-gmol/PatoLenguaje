@@ -1,0 +1,126 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "100000000000"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "SI",
+    "value": "si"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "MAYOR",
+    "value": ">"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "777"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "1"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "SINO",
+    "value": "sino"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "0"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

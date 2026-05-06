@@ -1,0 +1,466 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": "ID",
+    "value": "dfs"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "u"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "depth"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "0"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "ID",
+    "value": "n"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "0"
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "ID",
+    "value": "n"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "len"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "adj"
+  },
+  {
+    "type": "[",
+    "value": "["
+  },
+  {
+    "type": "ID",
+    "value": "u"
+  },
+  {
+    "type": "]",
+    "value": "]"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "MIENTRAS",
+    "value": "esperaque"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": "MENOR",
+    "value": "<"
+  },
+  {
+    "type": "ID",
+    "value": "n"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "HAZ",
+    "value": "\\/"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "if"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "visited"
+  },
+  {
+    "type": "[",
+    "value": "["
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": "]",
+    "value": "]"
+  },
+  {
+    "type": "NO",
+    "value": "!="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "1"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "depth"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "depth"
+  },
+  {
+    "type": "+",
+    "value": "+"
+  },
+  {
+    "type": "ID",
+    "value": "dfs"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "+",
+    "value": "+"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "1"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "[",
+    "value": "["
+  },
+  {
+    "type": "ID",
+    "value": "depth"
+  },
+  {
+    "type": "]",
+    "value": "]"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "ID",
+    "value": "iteraciones"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "5"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "dfs"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "0"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": "*",
+    "value": "*"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "100"
+  },
+  {
+    "type": "-",
+    "value": "-"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "50"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "SI",
+    "value": "si"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": "MAYOR",
+    "value": ">"
+  },
+  {
+    "type": "CTE_ENT",
+    "value": "10"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "LETRERO",
+    "value": "Mucho"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "SINO",
+    "value": "sino"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "LETRERO",
+    "value": "Poco"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

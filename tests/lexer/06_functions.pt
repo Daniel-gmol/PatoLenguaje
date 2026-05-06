@@ -1,6 +1,7 @@
 init
 nil main() {
     val x: entero;
+    regresa x;
 }
 arranca
 acaba

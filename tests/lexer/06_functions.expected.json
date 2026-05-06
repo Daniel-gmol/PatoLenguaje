@@ -1,0 +1,70 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "NULA",
+    "value": "nil"
+  },
+  {
+    "type": "ID",
+    "value": "main"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "RETURN",
+    "value": "regresa"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]
