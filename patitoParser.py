@@ -70,7 +70,7 @@ class PatitoParser(object):
         """ng_add_dirf : """
         self.curr_scope = p[-1] 
         self.glob_scope = p[-1] 
-        self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {}}
+        self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {}, "params": []}
 
     def p_ng_del(self, p):
         """ng_del : """
@@ -213,13 +213,15 @@ class PatitoParser(object):
             else:
                 # RETURN NULA / RETURN expresion
                 func_type = self.dir_fun[self.curr_scope]["type"]
-                if p[2] == 'nil' and func_type != 'nil':
-                    self.errors.append(f"Error semántico: función '{self.curr_scope}' debe retornar {func_type}, no nula")
+                if not isinstance(p[2], tuple):
+                    if func_type not in ['nil', 'nula', p[2]]:
+                        self.errors.append(f"Error semántico: función '{self.curr_scope}' debe retornar {func_type}, no nula")
+                    p[0] = ('return', p[2])
                 else:
                     result_type = self.get_result_type(func_type, "=", p[2][1], special=True)
                     if result_type is None:
                         self.errors.append(f"Error semántico: función '{self.curr_scope}' retorna {p[2][1]}, pero se esperaba {func_type}")
-                p[0] = ('return', p[2][1])
+                    p[0] = ('return', p[2][1])
 
     def p_asigna(self, p):
         """asigna : ID '=' expresion ';'"""
@@ -243,7 +245,7 @@ class PatitoParser(object):
         if len(args) != len(expected_args):
             self.errors.append(f"Error semántico: función '{p[1]}' espera {len(expected_args)} argumentos, recibió {len(args)}")
         
-        for i in range(len(args)):
+        for i in range(min(len(args), len(expected_args))):
             arg_type = args[i][1] 
             param_type = expected_args[i]
 
@@ -373,7 +375,11 @@ class PatitoParser(object):
         if len(p) == 4:
             p[0] = p[2]
         elif len(p) == 3:
-            p[0] = ('unary', p[1], p[2])
+            if isinstance(p[2], str):
+                var_type = self.get_var_type(p[2])
+                p[0] = (('unary', p[1], p[2]), var_type)
+            else:
+                p[0] = (('unary', p[1], p[2][0]), p[2][1])
         else:
             value = p[1]
 

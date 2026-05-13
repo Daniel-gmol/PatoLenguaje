@@ -15,7 +15,7 @@ nil miFuncion(a: entero, b: decimal) {
 arranca
 {
     id1 = 10;
-    id2 = 5;
+    id2 = - 5;
     id3 = 3.14;
     
     miFuncion(id1, id3);
