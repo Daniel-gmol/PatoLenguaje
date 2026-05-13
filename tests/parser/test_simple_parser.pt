@@ -1,0 +1,28 @@
+init test;
+val
+    a, b, c, d : entero;
+    e, f, g, h : decimal;
+
+nil fun(aaa: entero, bbb: decimal){
+    {
+    }
+};
+entero fun2(){
+    {
+        regresa 3;
+    }
+};
+arranca {
+    dale(a);
+    dale(10);
+    dale(3.1415);
+    a = 10;
+    b = 5 * 10;
+    c = 10 - 10;
+    d = a > b;
+    a = d;
+    e = b;
+    e = f;
+    fun(a, e);
+}
+acaba

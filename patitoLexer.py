@@ -123,11 +123,13 @@ class PatitoLexer(object):
     def t_CTE_FLOT(self, t):
         r"[0-9]+(_[0-9]+)*\.[0-9]+(_[0-9]+)*([eE][+-]?[0-9]+(_[0-9]+)*)?"
         t.value = t.value.replace("_", "")
+        t.value = float(t.value)
         return t
 
     def t_CTE_ENT(self, t):
         r"[0-9]+(_[0-9]+)*"
         t.value = t.value.replace("_", "")
+        t.value = int(t.value)
         return t
 
     def t_ID(self, t):

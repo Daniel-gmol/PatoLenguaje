@@ -1,0 +1,10 @@
+init testDupVar;
+val
+    a, b : entero;
+    a : decimal;
+
+arranca
+{
+    a = 10;
+}
+acaba

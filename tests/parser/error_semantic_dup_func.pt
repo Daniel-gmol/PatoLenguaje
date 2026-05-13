@@ -1,0 +1,20 @@
+init testDupFunc;
+val a : entero;
+
+nil f(x : entero) {
+    {
+        a = 1;
+    }
+};
+
+nil f(y : decimal) {
+    {
+        a = 2;
+    }
+};
+
+arranca
+{
+    a = 10;
+}
+acaba

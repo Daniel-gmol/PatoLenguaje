@@ -6,10 +6,11 @@ from patitoParser import PatitoParser
 
 def analyze_file(
     parser, input_path: str, output_path: str = None
-) -> tuple[bool, Exception | None, float, list[str], any]:
+) -> tuple[bool, Exception | None, float, list[str], any, dict | None]:
     success: bool = False
     error: Exception | None = None
     ast = None
+    dir_fun = None
     
     real_time_start = time.perf_counter()
     try:
@@ -17,11 +18,17 @@ def analyze_file(
             data = f.read()
 
         ast = parser.parse(data)
+        dir_fun = parser.dir_fun
+
         if output_path and ast is not None:
             import pprint
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             with open(output_path, "w", encoding="utf-8") as f_out:
+                f_out.write("AST:\n")
                 pprint.pprint(ast, stream=f_out)
+
+                f_out.write("\n\nDIR_FUN:\n")
+                pprint.pprint(dir_fun, stream=f_out)
         success = True
     except Exception as e:
         error = e
@@ -31,7 +38,7 @@ def analyze_file(
 
     elapsed_time = (real_time_end - real_time_start) * 1000
     
-    return success, error, elapsed_time, parser.errors, ast
+    return success, error, elapsed_time, parser.errors, ast, dir_fun
 
 def run_all_tests(parser, verbose: bool = False):
     test_files = sorted(glob.glob("tests/parser/*.pt"))
@@ -52,7 +59,7 @@ def run_all_tests(parser, verbose: bool = False):
         is_error_test = basename.startswith("error_")
         output_file = None if is_error_test else f"tests-results/parser/{name_without_ext}.log"
 
-        success, error, elapsed_time, parser_errors, ast = analyze_file(
+        success, error, elapsed_time, parser_errors, ast, dir_fun = analyze_file(
             parser, test_file, output_file
         )
 

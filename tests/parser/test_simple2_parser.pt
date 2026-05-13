@@ -1,0 +1,18 @@
+init test;
+val
+    a, b : entero;
+    c: decimal;
+arranca {
+    si (a > b) {
+        dale(a);
+    };
+
+    esperaque (a < b) \/ {
+        dale(b);
+    };
+
+    si(a){
+        dale(5);
+    };
+}
+acaba
