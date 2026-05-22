@@ -51,11 +51,7 @@ Or run a specific test file by providing its path.
   - Builds the lexer/parser with PLY’s optimization flag, which can improve parsing speed.
   - Use the flag to build with optimization: `python lexerTester.py -o` or `python parserTester.py --optimize`.
 
-- **Heavy Mode** (`--heavy` or `-h`)
-  - Runs a performance stress test (only applicable to the lexer tester). It repeatedly tokenizes a large test file to measure execution time.
-  - Activate with `python lexerTester.py --heavy`.
-
-These options can be combined, e.g., `python lexerTester.py -v -o --heavy`.
+These options can be combined, e.g., `python lexerTester.py -v -o`.
 
 ## Setup and Requirements
 

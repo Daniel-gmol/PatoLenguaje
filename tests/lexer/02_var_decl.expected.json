@@ -57,7 +57,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "777"
+    "value": 777
   },
   {
     "type": ";",
@@ -73,7 +73,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "100000001"
+    "value": 100000001
   },
   {
     "type": "FIN",

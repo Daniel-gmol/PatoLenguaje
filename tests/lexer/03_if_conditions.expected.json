@@ -37,7 +37,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "100000000000"
+    "value": 100000000000
   },
   {
     "type": ";",
@@ -61,7 +61,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "777"
+    "value": 777
   },
   {
     "type": ")",
@@ -81,7 +81,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "1"
+    "value": 1
   },
   {
     "type": ";",
@@ -109,7 +109,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "0"
+    "value": 0
   },
   {
     "type": ";",

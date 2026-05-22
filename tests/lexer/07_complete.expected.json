@@ -44,28 +44,8 @@
     "value": "depth"
   },
   {
-    "type": ":",
-    "value": ":"
-  },
-  {
-    "type": "ENTERO",
-    "value": "entero"
-  },
-  {
-    "type": "=",
-    "value": "="
-  },
-  {
-    "type": "CTE_ENT",
-    "value": "0"
-  },
-  {
-    "type": ";",
-    "value": ";"
-  },
-  {
-    "type": "VARS",
-    "value": "val"
+    "type": ",",
+    "value": ","
   },
   {
     "type": "ID",
@@ -88,16 +68,40 @@
     "value": "entero"
   },
   {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "depth"
+  },
+  {
     "type": "=",
     "value": "="
   },
   {
     "type": "CTE_ENT",
-    "value": "0"
+    "value": 0
   },
   {
-    "type": ",",
-    "value": ","
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": 0
+  },
+  {
+    "type": ";",
+    "value": ";"
   },
   {
     "type": "ID",
@@ -117,7 +121,7 @@
   },
   {
     "type": "ID",
-    "value": "adj"
+    "value": "ajd"
   },
   {
     "type": "[",
@@ -172,8 +176,8 @@
     "value": "{"
   },
   {
-    "type": "ID",
-    "value": "if"
+    "type": "SI",
+    "value": "si"
   },
   {
     "type": "(",
@@ -201,7 +205,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "1"
+    "value": 1
   },
   {
     "type": ")",
@@ -249,7 +253,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "1"
+    "value": 1
   },
   {
     "type": ";",
@@ -264,16 +268,12 @@
     "value": "}"
   },
   {
-    "type": "[",
-    "value": "["
+    "type": "RETURN",
+    "value": "regresa"
   },
   {
     "type": "ID",
     "value": "depth"
-  },
-  {
-    "type": "]",
-    "value": "]"
   },
   {
     "type": ";",
@@ -301,7 +301,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "5"
+    "value": 5
   },
   {
     "type": ";",
@@ -337,7 +337,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "0"
+    "value": 0
   },
   {
     "type": ")",
@@ -377,7 +377,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "100"
+    "value": 100
   },
   {
     "type": "-",
@@ -385,7 +385,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "50"
+    "value": 50
   },
   {
     "type": ";",
@@ -409,7 +409,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": "10"
+    "value": 10
   },
   {
     "type": ")",

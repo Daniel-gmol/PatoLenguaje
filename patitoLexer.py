@@ -2,7 +2,6 @@ import codecs
 from ply import lex
 from typing import Generator
 
-
 class PatitoLexer(object):
     """
     Lexer para patito lenguaje
@@ -161,17 +160,26 @@ class PatitoLexer(object):
         t.lexer.skip(1)
 
 
-if __name__ == "__main__":
+def main() -> None:
     import sys
+    import argparse
 
-    mylex = PatitoLexer()
-    mylex.build()
+    arg_parser = argparse.ArgumentParser(description="Patito lexer")
+    arg_parser.add_argument(
+        "file", 
+        nargs="?", 
+        type=argparse.FileType('r'), 
+        default=sys.stdin, 
+        help="Paito source file (default: stdin)"
+    )
+    arg_parser.add_argument("-o", "--optimize", action="store_true", help="Generate lexer optimize")
+    args = arg_parser.parse_args()
+    data = args.file.read()
 
-    # Recibe codigo de stdin, archivo o redireccion de archivo
-    if len(sys.argv) > 1:
-        with open(sys.argv[1], "r", encoding="utf-8") as f:
-            data = f.read()
-    else:
-        data = sys.stdin.read()
+    my_lex = PatitoLexer()
+    my_lex.build(optimize=args.optimize) if args.optimize else my_lex.build()
 
-    mylex.test(data)
+    my_lex.test(data)
+
+if __name__ == "__main__":
+    main()
