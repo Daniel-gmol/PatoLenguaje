@@ -167,7 +167,7 @@ class PatitoParser(object):
                    | factor ng_quad_fact_end '/' ng_quad_fact termino"""
 
     def p_factor(self, p):
-        """factor : '(' expresion ')' 
+        """factor : '(' ng_add_false_bottom expresion ')' ng_remove_false_bottom 
                   | '+' ID ng_quad_sign_id
                   | '-' ID ng_quad_sign_id
                   | ID ng_quad_id
@@ -239,6 +239,9 @@ class PatitoParser(object):
         "p_ng_quad_sign_id": "ng_quad_sign_id : ",
         "p_ng_quad_cte": "ng_quad_cte : ",
         "p_ng_quad_sign_cte": "ng_quad_sign_cte : ",
+
+        "p_ng_add_false_bottom": "ng_add_false_bottom : ",
+        "p_ng_remove_false_bottom": "ng_remove_false_bottom : ",
     }
 
     for _name, _doc in _hidden_rules.items():

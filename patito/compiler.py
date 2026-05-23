@@ -231,6 +231,18 @@ class PatitoCompiler(PatitoParser):
         self.quads[end_jmp][3] = len(self.quads)
 
     # 1.5 Expresiones
+    def p_ng_add_false_bottom(self, p):
+        """ng_add_false_bottom : """
+        if not self.generate_quads:
+            return
+        self.poper.append('(')
+
+    def p_ng_remove_false_bottom(self, p):
+        """ng_remove_false_bottom : """
+        if not self.generate_quads:
+            return
+        self.poper.pop()
+
     def p_ng_quad_relop(self, p):
         """ng_quad_relop : """
         if not self.generate_quads:
