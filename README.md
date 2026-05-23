@@ -1,57 +1,37 @@
 # Proyecto Patito
 
-Un proyecto sencillito para el lenguaje Patito.
+Un proyecto sencillito para el lenguaje **Patito**.
 
 ![Pingüino](misc/pinguino3334.png)
 
 
-## How to Use the Lexer
+## Project Structure
 
-The lexer can be run from the command line:
-
-```bash
-python lexerTester.py <source_file.pt>
+```
+patito/
+├── patito/
+│   ├── lexer.py
+│   ├── parser.py
+│   ├── compiler.py
+│   ├── memory.py
+│   ├── semantic_cube.py
+│
+├── tests/
+│   ├── shared/
+│   ├── lexer/
+│   ├── parser/
+│   └── semantic/
+│
+├── tests_runners/
+│   ├── test_runner.py
+│   ├── lexer_tester.py
+│   ├── parser_tester.py
+│   └── compiler_tester.py
+│
+└── requirements.txt
 ```
 
-It will output tokens and any lexical errors.
-
-## How to Use the Parser
-
-The parser can be executed similarly:
-
-```bash
-python parserTester.py <source_file.pt>
-```
-
-It will validate the syntax and, if successful, build the AST.
-
-## Running the Test Cases
-
-All lexer and parser test cases are located in the `tests/` directory.
-
-- Lexer tests: `tests/lexer/`
-- Parser tests: `tests/parser/`
-
-You can run the full test suite with:
-
-```bash
-python lexerTester.py   # runs all lexer tests
-python parserTester.py  # runs all parser tests
-```
-
-Or run a specific test file by providing its path.
-
-## Available Options for Test Scripts
-
-- **Verbose Mode** (`--verbose` or `-v`)
-  - Provides detailed output for each test case, including timing and pass/fail messages.
-  - Activate by adding the flag when running the tester, e.g., `python lexerTester.py -v` or `python parserTester.py --verbose`.
-
-- **Optimize Mode** (`--optimize` or `-o`)
-  - Builds the lexer/parser with PLY’s optimization flag, which can improve parsing speed.
-  - Use the flag to build with optimization: `python lexerTester.py -o` or `python parserTester.py --optimize`.
-
-These options can be combined, e.g., `python lexerTester.py -v -o`.
+---
 
 ## Setup and Requirements
 
@@ -59,10 +39,89 @@ The project uses a Python virtual environment. To get started:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # on Unix/macOS
-# .venv\Scripts\activate   # on Windows
+source .venv/bin/activate       # on Unix/macOS
+# .venv\Scripts\activate        # on Windows
 
 pip install -r requirements.txt
 ```
 
-The `requirements.txt` file was generated from the virtual environment and contains all necessary dependencies (e.g., PLY, tabulate). After activation, you can run the lexer, parser, and tests as described above.
+---
+
+## Running the Compiler Directly
+
+Each module in `patito/` has a `main()` entry point and can be invoked individually
+from the project root (with the virtual environment active). All three accept an
+optional file argument; if omitted, they read from **stdin**.
+
+### Lexer
+
+```bash
+python -m patito.lexer <source_file.pt>
+# or: echo 'programa foo; fin' | python -m patito.lexer
+```
+
+Tokenizes the source file and prints the token stream with any lexical errors.
+
+### Parser
+
+```bash
+python -m patito.parser <source_file.pt>
+# or: cat program.pt | python -m patito.parser
+```
+
+Validates syntax and builds the variable/function directory.
+
+### Compiler (Semantic + IR)
+
+```bash
+python -m patito.compiler <source_file.pt>
+# or: cat program.pt | python -m patito.compiler
+```
+
+Runs full compilation: syntax, semantic checks, and IR generation (quadruples).
+Prints the function directory, raw quadruples, and human-readable quadruples.
+
+---
+
+## Running the Test Suites
+
+All test runners live in `tests_runners/` and must be invoked as Python **modules**
+from the project root so that relative imports resolve correctly.
+
+### Lexer tests
+
+```bash
+python -m tests_runners.lexer_tester
+```
+
+### Parser tests
+
+```bash
+python -m tests_runners.parser_tester
+```
+
+### Compiler / Semantic + IR tests
+
+```bash
+python -m tests_runners.compiler_tester
+```
+
+Test cases are read from `tests/shared/` (common) and the suite-specific directory.
+Each run writes `.log` files to `tests-results/<suite>/`.
+
+---
+
+## Available Options for Test Scripts
+
+All three test runners accept the same flags:
+
+| Flag | Short | Description |
+|------|-------|-------------|
+| `--verbose` | `-v` | Print per-test timing and pass/fail details |
+| `--optimize` | `-o` | Build the lexer/parser with PLY's optimization flag |
+
+**Example – verbose compiler tests with optimization:**
+
+```bash
+python -m tests_runners.compiler_tester -v -o
+```

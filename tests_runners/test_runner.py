@@ -1,11 +1,11 @@
 import os
 import glob
-import time
 import argparse
 from dataclasses import dataclass
 
 
-SHARED_DIR = "tests/shared"
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SHARED_DIR = os.path.join(ROOT_DIR, "tests", "shared")
 
 
 @dataclass
@@ -17,8 +17,11 @@ class TestResult:
 
 
 def run_all_tests(suite_dir: str, run_single_test_fn, verbose: bool = False) -> None:
-    shared_tests = sorted(glob.glob(f"{SHARED_DIR}/*.pt"))
-    suite_tests = sorted(glob.glob(f"{suite_dir}/*.pt"))
+    if not os.path.isabs(suite_dir):
+        suite_dir = os.path.join(ROOT_DIR, suite_dir)
+
+    shared_tests = sorted(glob.glob(os.path.join(SHARED_DIR, "*.pt")))
+    suite_tests = sorted(glob.glob(os.path.join(suite_dir, "*.pt")))
     test_files = shared_tests + suite_tests
 
     if not test_files:

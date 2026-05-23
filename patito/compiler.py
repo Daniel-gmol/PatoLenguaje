@@ -1,7 +1,7 @@
 from collections import deque
-from patitoParser import PatitoParser
-from virtualMemory import VirtualMemory
-from semanticCube import cube
+from .parser import PatitoParser
+from .memory import VirtualMemory
+from .semantic_cube import cube
 
 class PatitoCompilerError(Exception):
     pass
@@ -458,7 +458,7 @@ def main():
     arg_parser.add_argument(
         "file",
         nargs="?",
-        type=argparse.FileType("r"),
+        type=argparse.FileType("r", encoding="utf-8"),
         default=sys.stdin,
         help="Patito source file (default: stdin)",
     )

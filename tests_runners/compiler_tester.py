@@ -2,11 +2,12 @@ import os
 import json
 import pprint
 import time
-from patitoCompiler import PatitoCompiler
-from testRunner import TestResult, run_all_tests, create_arg_parser
+from patito.compiler import PatitoCompiler
+from .test_runner import TestResult, run_all_tests, create_arg_parser
 
-TEST_DIR = "tests/semantic"
-RESULTS_DIR = "tests-results/semantic"
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+TEST_DIR = os.path.join(ROOT_DIR, "tests", "semantic")
+RESULTS_DIR = os.path.join(ROOT_DIR, "tests-results", "semantic")
 
 
 def analyze_file(compiler, input_path: str) -> tuple[bool, list[str], dict | None, list]:
@@ -81,8 +82,8 @@ def evaluate_test_logic(
 def run_single_test(compiler, test_file: str) -> TestResult:
     basename = os.path.basename(test_file)
     name_without_ext = os.path.splitext(basename)[0]
-    output_file = f"{RESULTS_DIR}/{name_without_ext}.log"
-    expected_file = f"{TEST_DIR}/{name_without_ext}.expected.json"
+    output_file = os.path.join(RESULTS_DIR, f"{name_without_ext}.log")
+    expected_file = os.path.join(TEST_DIR, f"{name_without_ext}.expected.json")
 
     start_time = time.perf_counter()
     try:

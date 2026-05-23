@@ -1,5 +1,7 @@
+import os
+import sys
 import ply.yacc as yacc
-from patitoLexer import PatitoLexer
+from .lexer import PatitoLexer
 
 class PatitoSyntaxError(Exception):
     pass
@@ -19,7 +21,19 @@ class PatitoParser(object):
         self.errors = []
 
     def build(self, **kwargs):
-        self.parser = yacc.yacc(module=self, **kwargs)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        cache_dir = os.path.join(current_dir, ".ply_cache")
+        os.makedirs(cache_dir, exist_ok=True)
+
+        if cache_dir not in sys.path:
+            sys.path.insert(0, cache_dir)
+
+        self.parser = yacc.yacc(
+            module=self,
+            tabmodule="parsetab",
+            outputdir=cache_dir,
+            **kwargs
+        )
 
     def parse(self, data):
         self.lexer_obj.lexer.lineno = 1
@@ -237,14 +251,13 @@ class PatitoParser(object):
 
 
 def main():
-    import sys
     import argparse
 
     arg_parser = argparse.ArgumentParser(description="Patito parser")
     arg_parser.add_argument(
         "file",
         nargs="?",
-        type=argparse.FileType("r"),
+        type=argparse.FileType("r", encoding="utf-8"),
         default=sys.stdin,
         help="Patito source file (default: stdin)",
     )

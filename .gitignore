@@ -1,6 +1,7 @@
 __pycache__/
 .venv/
 tests-results/
+.ply_cache/
 lextab.py
 parsetab.py
 *.pdf

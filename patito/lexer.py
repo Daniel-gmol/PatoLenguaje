@@ -1,4 +1,6 @@
 import codecs
+import os
+import sys
 from ply import lex
 from typing import Generator
 
@@ -71,7 +73,19 @@ class PatitoLexer(object):
         self.errors: list[str] = []
 
     def build(self, **kwargs) -> None:
-        self.lexer = lex.lex(module=self, **kwargs)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        cache_dir = os.path.join(current_dir, ".ply_cache")
+        os.makedirs(cache_dir, exist_ok=True)
+
+        if cache_dir not in sys.path:
+            sys.path.insert(0, cache_dir)
+
+        self.lexer = lex.lex(
+            module=self,
+            lextab="lextab",
+            outputdir=cache_dir,
+            **kwargs
+        )
 
     # =========================================================================
     # 2.1 Contrato para yacc parser
@@ -161,14 +175,13 @@ class PatitoLexer(object):
 
 
 def main() -> None:
-    import sys
     import argparse
 
     arg_parser = argparse.ArgumentParser(description="Patito lexer")
     arg_parser.add_argument(
         "file", 
         nargs="?", 
-        type=argparse.FileType('r'), 
+        type=argparse.FileType('r', encoding='utf-8'), 
         default=sys.stdin, 
         help="Paito source file (default: stdin)"
     )
