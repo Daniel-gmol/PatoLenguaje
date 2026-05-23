@@ -1,22 +1,15 @@
 import os
-import sys
-import glob
-import time
-import timeit
 import json
-import argparse
-from dataclasses import dataclass
+import time
 from tabulate import tabulate
 from patitoLexer import PatitoLexer
+from testRunner import TestResult, run_all_tests, create_arg_parser
 
-@dataclass
-class TestResult:
-    name: str
-    passed: bool
-    elapsed_time: float
-    fail_reason: str = ""
+TEST_DIR = "tests/lexer"
+RESULTS_DIR = "tests-results/lexer"
 
-def analyze_file(lexer, input_path: str) -> tuple[list[dict], list[dict], list[str]]:
+
+def analyze_file(lexer, input_path: str) -> tuple[list, list[dict], list[str]]:
     with open(input_path, "r", encoding="utf-8") as f:
         data = f.read()
 
@@ -34,6 +27,7 @@ def analyze_file(lexer, input_path: str) -> tuple[list[dict], list[dict], list[s
 
     return tokens_complete, tokens_json, lexer.errors
 
+
 def write_token_log(tokens: list, output_path: str) -> None:
     if not output_path:
         return
@@ -43,7 +37,8 @@ def write_token_log(tokens: list, output_path: str) -> None:
     )
     with open(output_path, "w", encoding="utf-8") as f_out:
         f_out.write(token_table)
-    
+
+
 def evaluate_test_logic(basename: str, tokens: list[dict], lexer_errors: list[str], expected_file: str) -> tuple[bool, str]:
     is_error_test = basename.startswith("error_")
 
@@ -68,11 +63,12 @@ def evaluate_test_logic(basename: str, tokens: list[dict], lexer_errors: list[st
     except json.JSONDecodeError:
         return False, f"Error de formato en el archivo json: {expected_file}"
 
+
 def run_single_test(lexer, test_file: str) -> TestResult:
     basename = os.path.basename(test_file)
     name_without_ext = os.path.splitext(basename)[0]
-    output_file = f"tests-results/lexer/{name_without_ext}.log"
-    expected_file = f"tests/lexer/{name_without_ext}.expected.json"
+    output_file = f"{RESULTS_DIR}/{name_without_ext}.log"
+    expected_file = f"{TEST_DIR}/{name_without_ext}.expected.json"
 
     start_time = time.perf_counter()
     try:
@@ -87,43 +83,15 @@ def run_single_test(lexer, test_file: str) -> TestResult:
 
     return TestResult(name_without_ext, passed, elapsed_time, fail_reason)
 
-def run_all_tests(lexer, verbose: bool = False) -> None:
-    test_files = sorted(glob.glob("tests/lexer/*.pt"))
-    if not test_files:
-        print("No se encontraron archivos de prueba en tests/lexer/")
-        return
-
-    print(f"Se encontraron {len(test_files)} pruebas.")
-    if verbose:
-        print("-" * 65)
-
-    results = []
-    for tf in test_files:
-        result = run_single_test(lexer, tf)
-        results.append(result)
-
-        if verbose:
-            status = f"{'✓ PASS':<10}" if result.passed else f"{'✗ FAIL':<10}"
-            reason = f" {result.fail_reason}" if result.fail_reason else ""
-            print(f"Test {result.name:<25} {result.elapsed_time:>6.2f} ms  {status}{reason}")
-
-    if verbose:
-        print("-" * 65)
-
-    passed_count = sum(1 for r in results if r.passed)
-    failed_count = len(results) - passed_count
-    print(f"Resumen: {passed_count} Pasó, {failed_count} Falló")
 
 def main():
-    parser = argparse.ArgumentParser(description="PatitoLexer Test Runner")
-    parser.add_argument("-o", "--optimize", action="store_true", help="Build lexer with optimizations")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose status printing")
-    args = parser.parse_args()
+    args = create_arg_parser("PatitoLexer Test Runner").parse_args()
 
     lexer = PatitoLexer()
     lexer.build(optimize=1 if args.optimize else 0)
 
-    run_all_tests(lexer, verbose=args.verbose)
+    run_all_tests(TEST_DIR, lambda tf: run_single_test(lexer, tf), verbose=args.verbose)
+
 
 if __name__ == "__main__":
     main()

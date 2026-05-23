@@ -1,0 +1,13 @@
+init print_test;
+val
+    x : entero;
+    y : decimal;
+arranca {
+    x = 42;
+    y = 3.14;
+    dale(x);
+    dale(y);
+    dale("Hola mundo");
+    dale(x, " y ", y);
+}
+acaba

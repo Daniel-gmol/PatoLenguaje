@@ -1,0 +1,6 @@
+init error_no_inicio;
+val x : entero;
+{
+    x = 1;
+}
+acaba

@@ -4,12 +4,28 @@
     "value": "init"
   },
   {
+    "type": "ID",
+    "value": "vars_test"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
     "type": "VARS",
     "value": "val"
   },
   {
     "type": "ID",
-    "value": "x"
+    "value": "a"
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "ID",
+    "value": "b"
   },
   {
     "type": ":",
@@ -24,20 +40,16 @@
     "value": ";"
   },
   {
-    "type": "VARS",
-    "value": "val"
-  },
-  {
     "type": "ID",
-    "value": "y"
+    "value": "c"
   },
   {
     "type": ":",
     "value": ":"
   },
   {
-    "type": "ENTERO",
-    "value": "entero"
+    "type": "FLOTANTE",
+    "value": "decimal"
   },
   {
     "type": ";",
@@ -48,8 +60,12 @@
     "value": "arranca"
   },
   {
+    "type": "{",
+    "value": "{"
+  },
+  {
     "type": "ID",
-    "value": "x"
+    "value": "a"
   },
   {
     "type": "=",
@@ -57,7 +73,7 @@
   },
   {
     "type": "CTE_ENT",
-    "value": 777
+    "value": 10
   },
   {
     "type": ";",
@@ -65,7 +81,7 @@
   },
   {
     "type": "ID",
-    "value": "y"
+    "value": "b"
   },
   {
     "type": "=",
@@ -73,7 +89,31 @@
   },
   {
     "type": "CTE_ENT",
-    "value": 100000001
+    "value": 5
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "c"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_FLOT",
+    "value": 3.14
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
   },
   {
     "type": "FIN",

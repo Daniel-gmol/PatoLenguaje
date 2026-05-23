@@ -1,0 +1,10 @@
+init vars_test;
+val
+    a, b : entero;
+    c : decimal;
+arranca {
+    a = 10;
+    b = 5;
+    c = 3.14;
+}
+acaba

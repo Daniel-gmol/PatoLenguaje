@@ -1,0 +1,294 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "ID",
+    "value": "func_test"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "g"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "NULA",
+    "value": "nil"
+  },
+  {
+    "type": "ID",
+    "value": "saludar"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "LETRERO",
+    "value": "Hola"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "NULA",
+    "value": "nil"
+  },
+  {
+    "type": "ID",
+    "value": "sumar"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "a"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "ID",
+    "value": "b"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "a"
+  },
+  {
+    "type": "+",
+    "value": "+"
+  },
+  {
+    "type": "ID",
+    "value": "b"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "res"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "g"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": 1
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "saludar"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "sumar"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "CTE_ENT",
+    "value": 3
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "CTE_ENT",
+    "value": 5
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

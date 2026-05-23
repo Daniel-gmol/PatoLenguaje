@@ -1,0 +1,194 @@
+[
+  {
+    "type": "PROGRAMA",
+    "value": "init"
+  },
+  {
+    "type": "ID",
+    "value": "print_test"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "VARS",
+    "value": "val"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "ENTERO",
+    "value": "entero"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": ":",
+    "value": ":"
+  },
+  {
+    "type": "FLOTANTE",
+    "value": "decimal"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "INICIO",
+    "value": "arranca"
+  },
+  {
+    "type": "{",
+    "value": "{"
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_ENT",
+    "value": 42
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": "=",
+    "value": "="
+  },
+  {
+    "type": "CTE_FLOT",
+    "value": 3.14
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "LETRERO",
+    "value": "Hola mundo"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "ESCRIBE",
+    "value": "dale"
+  },
+  {
+    "type": "(",
+    "value": "("
+  },
+  {
+    "type": "ID",
+    "value": "x"
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "LETRERO",
+    "value": " y "
+  },
+  {
+    "type": ",",
+    "value": ","
+  },
+  {
+    "type": "ID",
+    "value": "y"
+  },
+  {
+    "type": ")",
+    "value": ")"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
+    "type": "}",
+    "value": "}"
+  },
+  {
+    "type": "FIN",
+    "value": "acaba"
+  }
+]

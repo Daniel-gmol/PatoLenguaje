@@ -1,123 +1,73 @@
 import os
-import sys
-import glob
 import time
 from patitoParser import PatitoParser
+from testRunner import TestResult, run_all_tests, create_arg_parser
 
-def analyze_file(
-    parser, input_path: str, output_path: str = None
-) -> tuple[bool, Exception | None, float, list[str], any, dict | None]:
-    success: bool = False
-    error: Exception | None = None
-    ast = None
-    dir_fun = None
-    
-    real_time_start = time.perf_counter()
-    try:
-        with open(input_path, "r", encoding="utf-8") as f:
-            data = f.read()
+TEST_DIR = "tests/parser"
+RESULTS_DIR = "tests-results/parser"
 
-        ast = parser.parse(data)
-        dir_fun = parser.dir_fun
 
-        if output_path and ast is not None:
-            import pprint
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
-            with open(output_path, "w", encoding="utf-8") as f_out:
-                f_out.write("AST:\n")
-                pprint.pprint(ast, stream=f_out)
+def analyze_file(parser, input_path: str) -> tuple[bool, list[str]]:
+    with open(input_path, "r", encoding="utf-8") as f:
+        data = f.read()
 
-                f_out.write("\n\nDIR_FUN:\n")
-                pprint.pprint(dir_fun, stream=f_out)
-        success = True
-    except Exception as e:
-        error = e
-        success = False
-    finally:
-        real_time_end = time.perf_counter()
+    ok = parser.parse(data)
+    return ok, list(parser.errors)
 
-    elapsed_time = (real_time_end - real_time_start) * 1000
-    
-    return success, error, elapsed_time, parser.errors, ast, dir_fun
 
-def run_all_tests(parser, verbose: bool = False):
-    test_files = sorted(glob.glob("tests/parser/*.pt"))
-    if not test_files:
-        print("No tests found in tests/parser/ directory.")
+def write_parse_log(ok: bool, errors: list[str], output_path: str) -> None:
+    if not output_path:
         return
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, "w", encoding="utf-8") as f_out:
+        f_out.write(f"Parse OK: {ok}\n")
+        if errors:
+            f_out.write("\nErrors:\n")
+            for err in errors:
+                f_out.write(f"  {err}\n")
 
-    print(f"Found {len(test_files)} tests.")
 
-    passed = 0
-    failed = 0
+def evaluate_test_logic(basename: str, ok: bool, parser_errors: list[str]) -> tuple[bool, str]:
+    is_error_test = basename.startswith("error_")
 
-    if verbose:
-        print("-" * 50)
-    for test_file in test_files:
-        basename = os.path.basename(test_file)
-        name_without_ext = os.path.splitext(basename)[0]
-        is_error_test = basename.startswith("error_")
-        output_file = None if is_error_test else f"tests-results/parser/{name_without_ext}.log"
+    if is_error_test:
+        if not ok or len(parser_errors) > 0:
+            return True, ""
+        return False, "Esperaba errores en el parser, no se encontraron."
 
-        success, error, elapsed_time, parser_errors, ast, dir_fun = analyze_file(
-            parser, test_file, output_file
-        )
+    if not ok or len(parser_errors) > 0:
+        return False, f"Error inesperado en el parser: {parser_errors}"
 
-        test_passed = False
-        fail_reason = ""
+    return True, ""
 
-        if not success:
-            test_passed = False
-            fail_reason = f"Exception: {error}"
-        elif is_error_test:
-            if len(parser_errors) > 0:
-                test_passed = True
-            else:
-                test_passed = False
-                fail_reason = "Expected parser errors, but found none."
-        else:
-            if len(parser_errors) > 0:
-                test_passed = False
-                fail_reason = f"Unexpected parser errors: {parser_errors[0]}"
-            else:
-                test_passed = True
 
-        if test_passed:
-            passed += 1
-        else:
-            failed += 1
+def run_single_test(parser, test_file: str) -> TestResult:
+    basename = os.path.basename(test_file)
+    name_without_ext = os.path.splitext(basename)[0]
+    output_file = f"{RESULTS_DIR}/{name_without_ext}.log"
 
-        if verbose:
-            print(f"{'Testing ' + name_without_ext:<30}", end=" ")
-            print(f"{elapsed_time:>5.2f} ms", end=" ")
-            if test_passed:
-                print(f"{'✓ PASS':<10}")
-            else:
-                print(f"{'✗ FAIL':<10} {fail_reason}")
+    start_time = time.perf_counter()
+    try:
+        ok, parser_errors = analyze_file(parser, test_file)
+        passed, fail_reason = evaluate_test_logic(basename, ok, parser_errors)
+        write_parse_log(ok, parser_errors, output_file)
+    except Exception as e:
+        passed = False
+        fail_reason = f"Excepción: {str(e)}"
+    finally:
+        elapsed_time = (time.perf_counter() - start_time) * 1000
 
-    if verbose:
-        print("-" * 50)
+    return TestResult(name_without_ext, passed, elapsed_time, fail_reason)
 
-    print(f"Test Summary: {passed} Passed, {failed} Failed")
+
+def main():
+    args = create_arg_parser("PatitoParser Test Runner").parse_args()
+
+    parser = PatitoParser()
+    parser.build(optimize=1 if args.optimize else 0)
+
+    run_all_tests(TEST_DIR, lambda tf: run_single_test(parser, tf), verbose=args.verbose)
 
 
 if __name__ == "__main__":
-    parser = PatitoParser()
-    
-    is_built = False
-    verbose = False
-
-    if len(sys.argv) > 1:
-        for arg in sys.argv[1:]:
-            if arg in ["--optimize", "-o"]:
-                parser.build(optimize=1)
-                is_built = True
-            elif arg in ["--verbose", "-v"]:
-                verbose = True
-            else:
-                pass
-
-    if not is_built:
-        parser.build()
-
-    run_all_tests(parser, verbose=verbose)
+    main()

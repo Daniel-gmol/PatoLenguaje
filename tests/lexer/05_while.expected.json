@@ -4,12 +4,20 @@
     "value": "init"
   },
   {
+    "type": "ID",
+    "value": "while_test"
+  },
+  {
+    "type": ";",
+    "value": ";"
+  },
+  {
     "type": "VARS",
     "value": "val"
   },
   {
     "type": "ID",
-    "value": "x"
+    "value": "i"
   },
   {
     "type": ":",
@@ -28,8 +36,12 @@
     "value": "arranca"
   },
   {
+    "type": "{",
+    "value": "{"
+  },
+  {
     "type": "ID",
-    "value": "x"
+    "value": "i"
   },
   {
     "type": "=",
@@ -37,15 +49,15 @@
   },
   {
     "type": "CTE_ENT",
-    "value": 100000000000
+    "value": 0
   },
   {
     "type": ";",
     "value": ";"
   },
   {
-    "type": "SI",
-    "value": "si"
+    "type": "MIENTRAS",
+    "value": "esperaque"
   },
   {
     "type": "(",
@@ -53,19 +65,23 @@
   },
   {
     "type": "ID",
-    "value": "x"
+    "value": "i"
   },
   {
-    "type": "MAYOR",
-    "value": ">"
+    "type": "MENOR",
+    "value": "<"
   },
   {
     "type": "CTE_ENT",
-    "value": 777
+    "value": 10
   },
   {
     "type": ")",
     "value": ")"
+  },
+  {
+    "type": "HAZ",
+    "value": "\\/"
   },
   {
     "type": "{",
@@ -73,11 +89,19 @@
   },
   {
     "type": "ID",
-    "value": "x"
+    "value": "i"
   },
   {
     "type": "=",
     "value": "="
+  },
+  {
+    "type": "ID",
+    "value": "i"
+  },
+  {
+    "type": "+",
+    "value": "+"
   },
   {
     "type": "CTE_ENT",
@@ -90,26 +114,6 @@
   {
     "type": "}",
     "value": "}"
-  },
-  {
-    "type": "SINO",
-    "value": "sino"
-  },
-  {
-    "type": "{",
-    "value": "{"
-  },
-  {
-    "type": "ID",
-    "value": "x"
-  },
-  {
-    "type": "=",
-    "value": "="
-  },
-  {
-    "type": "CTE_ENT",
-    "value": 0
   },
   {
     "type": ";",

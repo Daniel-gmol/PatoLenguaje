@@ -1,0 +1,30 @@
+init complete;
+val
+    x, y, res : entero;
+    pi : decimal;
+
+nil imprimeRes(r: entero) {
+    {
+        dale("Resultado: ", r);
+    }
+};
+
+arranca {
+    x = 10;
+    y = 20;
+    pi = 3.14;
+    res = x + y * 2;
+
+    si (res > 30) {
+        dale("Grande");
+    } sino {
+        dale("Pequeño");
+    };
+
+    esperaque (x > 0) \/ {
+        x = x - 1;
+    };
+
+    imprimeRes(res);
+}
+acaba

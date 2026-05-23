@@ -118,22 +118,22 @@ class PatitoParser(object):
         """imprime : ESCRIBE '(' list_imprime ')' ';'"""
 
     def p_list_imprime(self, p):
-        """list_imprime : expresion ',' list_imprime
-                        | LETRERO ',' list_imprime
-                        | expresion
-                        | LETRERO"""
+        """list_imprime : expresion ng_add_print ',' list_imprime
+                        | LETRERO ng_add_print ',' list_imprime
+                        | expresion ng_add_print
+                        | LETRERO ng_add_print"""
 
     def p_ciclo(self, p):
-        """ciclo : MIENTRAS '(' expresion ')' HAZ cuerpo ';'"""
+        """ciclo : MIENTRAS ng_add_jump '(' expresion ')' ng_quad_if HAZ cuerpo ng_quad_while_end ';'"""
 
     def p_condicion(self, p):
-        """condicion : SI '(' expresion ')' cuerpo ';'
-                     | SI '(' expresion ')' cuerpo SINO cuerpo ';'"""
+        """condicion : SI '(' expresion ')' ng_quad_if cuerpo ';' ng_quad_if_end
+                     | SI '(' expresion ')' ng_quad_if cuerpo SINO ng_quad_else cuerpo ';' ng_quad_if_end"""
 
     # 2.6 Expresiones
     def p_expresion(self, p):
-        """expresion : exp
-                     | exp relop ng_quad_relop exp"""
+        """expresion : exp ng_quad_exp_end
+                     | exp ng_quad_exp_end relop ng_quad_relop exp ng_quad_exp_end"""
 
     def p_relop(self, p):
         """relop : MENOR
@@ -143,14 +143,14 @@ class PatitoParser(object):
         p[0] = p[1]
 
     def p_exp(self, p):
-        """exp : termino
-               | termino '+' ng_quad_term exp
-               | termino '-' ng_quad_term exp"""
+        """exp : termino ng_quad_term_end
+               | termino ng_quad_term_end '+' ng_quad_term exp
+               | termino ng_quad_term_end '-' ng_quad_term exp"""
 
     def p_termino(self, p):
-        """termino : factor
-                   | factor '*' ng_quad_fact termino
-                   | factor '/' ng_quad_fact termino"""
+        """termino : factor ng_quad_fact_end
+                   | factor ng_quad_fact_end '*' ng_quad_fact termino
+                   | factor ng_quad_fact_end '/' ng_quad_fact termino"""
 
     def p_factor(self, p):
         """factor : '(' expresion ')' 
@@ -203,9 +203,23 @@ class PatitoParser(object):
         "p_ng_quad_assign": "ng_quad_assign : ",
         "p_ng_quad_assign_end": "ng_quad_assign_end : ",
 
+        "p_ng_add_print": "ng_add_print : ",
+
+        "p_ng_add_jump": "ng_add_jump : ",
+        "p_ng_quad_while_end": "ng_quad_while_end : ",
+
+        "p_ng_quad_if": "ng_quad_if : ",
+        "p_ng_quad_else": "ng_quad_else : ",
+        "p_ng_quad_if_end": "ng_quad_if_end : ",
+
+        "p_ng_quad_exp_end": "ng_quad_exp_end : ",
         "p_ng_quad_relop": "ng_quad_relop : ",
+
         "p_ng_quad_term": "ng_quad_term : ",
+        "p_ng_quad_term_end": "ng_quad_term_end : ",
+
         "p_ng_quad_fact": "ng_quad_fact : ",
+        "p_ng_quad_fact_end": "ng_quad_fact_end : ",
 
         "p_ng_quad_id": "ng_quad_id : ",
         "p_ng_quad_sign_id": "ng_quad_sign_id : ",

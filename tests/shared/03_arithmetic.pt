@@ -1,0 +1,15 @@
+init arith_test;
+val
+    a, b, c : entero;
+    x, y : decimal;
+arranca {
+    a = 10;
+    b = 5;
+    c = a + b;
+    c = a - b;
+    c = a * b;
+    c = a / b;
+    x = 2.5;
+    y = x + 1.0;
+}
+acaba

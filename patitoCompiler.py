@@ -1,5 +1,6 @@
 from collections import deque
 from patitoParser import PatitoParser
+from virtualMemory import VirtualMemory
 from semanticCube import cube
 
 class PatitoCompilerError(Exception):
@@ -17,6 +18,9 @@ class PatitoCompiler(PatitoParser):
     def __init__(self):
         super().__init__()
 
+        self.memory = VirtualMemory() 
+        self.addr_names = {}
+
         self.dir_fun = None 
         self.curr_scope = None
         self.glob_scope = None
@@ -26,12 +30,15 @@ class PatitoCompiler(PatitoParser):
         self.poper = []
         self.pilao = []
         self.ptypes = []
+        self.pjumps = []
 
         self.quads = deque()
         self.temp_count = 0
 
-
     def parse(self, data):
+        self.memory = VirtualMemory() 
+        self.addr_names = {}
+
         self.dir_fun = None 
         self.curr_scope = None 
         self.glob_scope = None
@@ -41,6 +48,7 @@ class PatitoCompiler(PatitoParser):
         self.poper = []
         self.pilao = []
         self.ptypes = []
+        self.pjumps = []
 
         self.quads = deque()
         self.temp_count = 0
@@ -48,7 +56,7 @@ class PatitoCompiler(PatitoParser):
         return super().parse(data)
 
     # =========================================================================
-    # 1. Reglas de semántica
+    # 1. Reglas de semántica & Generación IR
     # =========================================================================
 
     # 1.1 Program init
@@ -70,9 +78,16 @@ class PatitoCompiler(PatitoParser):
         """ng_update_type : """
         var_type = p[-1]
 
-        for var_id in self.dir_fun[self.curr_scope]["vars"]:
-            if self.dir_fun[self.curr_scope]["vars"][var_id] == self.PENDING:
-                self.dir_fun[self.curr_scope]["vars"][var_id] = var_type 
+        for var_id, details in self.dir_fun[self.curr_scope]["vars"].items():
+            if details["type"] == self.PENDING:
+                segment = "global" if self.curr_scope == self.glob_scope else "local"
+
+                address = self.memory.alloc(segment, var_type)
+
+                details["type"] = var_type
+                details["address"] = address
+
+                self.addr_names[address] = var_id
 
     def p_ng_add_var(self, p):
         """ng_add_var : """
@@ -81,7 +96,7 @@ class PatitoCompiler(PatitoParser):
         if var_id in self.dir_fun[self.curr_scope]["vars"]:
             self.errors.append(f"Error: Variable '{var_id}' ya declarada")
         else:
-            self.dir_fun[self.curr_scope]["vars"][var_id] = self.PENDING 
+            self.dir_fun[self.curr_scope]["vars"][var_id] = {"type": self.PENDING, "address": self.PENDING}
     
     # 1.3 Functions
     def p_funcs(self, p):
@@ -128,13 +143,16 @@ class PatitoCompiler(PatitoParser):
             return
 
         var_id = p[-2]
-        self.pilao.append(var_id)
         var_type = self._get_var_type(var_id)
+        var_addr = self._get_var_addr(var_id)
+
+        self.pilao.append(var_addr)
         self.ptypes.append(var_type)
 
         op = p[-1]
         self.poper.append(op)
 
+    # 1.4.1 Asignación
     def p_ng_quad_assign_end(self, p):
         """ng_quad_assign_end : """
         if not self.generate_quads:
@@ -142,7 +160,75 @@ class PatitoCompiler(PatitoParser):
 
         if self.poper and self.poper[-1] == '=':
             self._create_assign_quad()
-            
+
+    # 1.4.2 Imprimir
+    def p_ng_add_print(self, p):
+        """ng_add_print : """
+        if not self.generate_quads:
+            return
+
+        print_arg = p[-1]
+        if print_arg is None: 
+            var_addr = self.pilao.pop()
+            self.ptypes.pop()
+        else:
+            var_addr = self.memory.alloc_const(print_arg, "string")
+            self.addr_names[var_addr] = print_arg 
+        
+        self.quads.append(["PRINT", '_', '_', var_addr])
+
+    # 1.4.3 Ciclos
+    def p_ng_add_jump(self, p):
+        """ng_add_jump : """
+        if not self.generate_quads:
+            return
+
+        jump_inx = len(self.quads)
+        self.pjumps.append(jump_inx)
+
+    def p_ng_quad_while_end(self, p):
+        """ng_quad_while_end : """
+        if not self.generate_quads:
+            return
+
+        jmp_inx_false = self.pjumps.pop()
+        jmp_inx_rep = self.pjumps.pop()
+        self.quads.append(['GOTO', '_', '_', jmp_inx_rep])
+        self.quads[jmp_inx_false][3] = len(self.quads)
+
+    # 1.4.4 Condicionales
+    def p_ng_quad_if(self, p):
+        """ng_quad_if : """
+        if not self.generate_quads:
+            return
+
+        condition = self.pilao.pop()
+        self.ptypes.pop() #type condition
+        jmp_inx = len(self.quads)
+        self.quads.append(['GOTOF', condition, '_', '_'])
+        self.pjumps.append(jmp_inx)
+
+    def p_ng_quad_else(self, p):
+        """ng_quad_else : """
+        if not self.generate_quads:
+            return
+
+        jmp_inx_false = self.pjumps.pop()
+
+        jmp_inx = len(self.quads)
+        self.quads.append(['GOTO', '_', '_', '_'])
+
+        self.quads[jmp_inx_false][3] = len(self.quads)
+
+        self.pjumps.append(jmp_inx)
+        
+    def p_ng_quad_if_end(self, p):
+        """ng_quad_if_end : """
+        if not self.generate_quads:
+            return
+
+        end_jmp = self.pjumps.pop()
+        self.quads[end_jmp][3] = len(self.quads)
 
     # 1.5 Expresiones
     def p_ng_quad_relop(self, p):
@@ -150,33 +236,48 @@ class PatitoCompiler(PatitoParser):
         if not self.generate_quads:
             return
             
-        if self.poper and self.poper[-1] in ['<', '>', '!=', '==']:
+        op = p[-1]
+        self.poper.append(op)
+
+    def p_ng_quad_exp_end(self, p):
+        """ng_quad_exp_end : """
+        if not self.generate_quads:
+            return
+
+        if self.poper and self.poper[-1] in ['>', '<', '!=', '==']:
             self._create_expr_quad()
+
+    def p_ng_quad_term(self, p):
+        """ng_quad_term : """
+        if not self.generate_quads:
+            return
 
         op = p[-1]
         self.poper.append(op)
 
-    def p_ng_quad_term(self, p):
-        """ng_quad_term : """
+    def p_ng_quad_term_end(self, p):
+        """ng_quad_term_end : """
         if not self.generate_quads:
             return
             
         if self.poper and self.poper[-1] in ['+', '-']:
             self._create_expr_quad()
 
-        op = p[-1]
-        self.poper.append(op)
-
     def p_ng_quad_fact(self, p):
         """ng_quad_fact : """
         if not self.generate_quads:
             return
 
-        if self.poper and self.poper[-1] in ['*', '/']:
-            self._create_expr_quad()
-
         op = p[-1]
         self.poper.append(op)
+
+    def p_ng_quad_fact_end(self, p):
+        """ng_quad_fact_end : """
+        if not self.generate_quads:
+            return
+
+        if self.poper and self.poper[-1] in ['*', '/']:
+            self._create_expr_quad()
 
     def p_ng_quad_id(self, p):
         """ng_quad_id : """
@@ -184,8 +285,10 @@ class PatitoCompiler(PatitoParser):
             return
 
         var_id = p[-1]
-        self.pilao.append(var_id)
         var_type = self._get_var_type(var_id)
+        var_addr = self._get_var_addr(var_id)
+
+        self.pilao.append(var_addr)
         self.ptypes.append(var_type)
 
     def p_ng_quad_sign_id(self, p):
@@ -194,20 +297,22 @@ class PatitoCompiler(PatitoParser):
             return
 
         sign = p[-2]
+
         var_id = p[-1]
         var_type = self._get_var_type(var_id)
+        var_addr = self._get_var_addr(var_id)
 
         if sign == "+":
-            self.pilao.append(var_id)
+            self.pilao.append(var_addr)
             self.ptypes.append(var_type)
             return
 
-        temp = f"t{self.temp_count}"
+        result_addr = self.memory.alloc("temp", var_type)
+        self.addr_names[result_addr] = f"t{self.temp_count}"
         self.temp_count += 1
 
-        self.quads.append(["UMINUS", var_id, "_", temp])
-
-        self.pilao.append(temp)
+        self.quads.append(["UMINUS", var_addr, "_", result_addr])
+        self.pilao.append(result_addr)
         self.ptypes.append(var_type)
 
     def p_ng_quad_cte(self, p):
@@ -216,8 +321,11 @@ class PatitoCompiler(PatitoParser):
             return
 
         cte_val = p[-1]
-        self.pilao.append(cte_val)
         cte_type = self._get_cte_type(cte_val)
+        cte_address = self.memory.alloc_const(cte_val, cte_type)
+        self.addr_names[cte_address] = cte_val
+
+        self.pilao.append(cte_address)
         self.ptypes.append(cte_type)
 
     def p_ng_quad_sign_cte(self, p):
@@ -226,25 +334,35 @@ class PatitoCompiler(PatitoParser):
             return
 
         sign = p[-2]
-        cte_val = p[-1]
-        if sign == '-':
-            cte_val = - cte_val
 
-        self.pilao.append(cte_val)
+        cte_val = -p[-1] if sign == '-' else p[-1]
         cte_type = self._get_cte_type(cte_val)
+        cte_address = self.memory.alloc_const(cte_val, cte_type)
+        self.addr_names[cte_address] = cte_val
+
+        self.pilao.append(cte_address)
         self.ptypes.append(cte_type)
 
-
     # =========================================================================
-    # 3. Helpers para semántica
+    # 2. Helpers para semántica
     # =========================================================================
 
     def _get_var_type(self, var_name):
         if var_name in self.dir_fun[self.curr_scope]["vars"]:
-            return self.dir_fun[self.curr_scope]["vars"][var_name]
+            return self.dir_fun[self.curr_scope]["vars"][var_name]["type"]
 
         if var_name in self.dir_fun[self.glob_scope]["vars"]:
-            return self.dir_fun[self.glob_scope]["vars"][var_name]
+            return self.dir_fun[self.glob_scope]["vars"][var_name]["type"]
+
+        self.errors.append(f"Error semántico: variable '{var_name}' no declarada")
+        return self.ERROR 
+
+    def _get_var_addr(self, var_name):
+        if var_name in self.dir_fun[self.curr_scope]["vars"]:
+            return self.dir_fun[self.curr_scope]["vars"][var_name]["address"]
+
+        if var_name in self.dir_fun[self.glob_scope]["vars"]:
+            return self.dir_fun[self.glob_scope]["vars"][var_name]["address"]
 
         self.errors.append(f"Error semántico: variable '{var_name}' no declarada")
         return self.ERROR 
@@ -278,17 +396,17 @@ class PatitoCompiler(PatitoParser):
 
         result_type = self._get_result_type(left_type, operator, right_type)
 
-        print(left_type, operator, right_type, "->", result_type)
+        # print(left_type, operator, right_type, "->", result_type)
         if result_type == self.ERROR:
             self.errors.append(f"Error semántico: operación inválida {left_type} {operator} {right_type}")
             return
         
-        result = f't{self.temp_count}'
-        quad = [operator, left_operand, right_operand, result]
-        self.quads.append(quad)
+        result_addr = self.memory.alloc("temp", result_type)
+        self.addr_names[result_addr] = f't{self.temp_count}'
         self.temp_count += 1
 
-        self.pilao.append(result)
+        self.quads.append([operator, left_operand, right_operand, result_addr])
+        self.pilao.append(result_addr)
         self.ptypes.append(result_type)
     
     def _create_assign_quad(self):
@@ -308,6 +426,28 @@ class PatitoCompiler(PatitoParser):
         
         quad = [operator, right_operand, "_", left_operand]
         self.quads.append(quad)
+
+    # =========================================================================
+    # 3. Helpers debug 
+    # =========================================================================
+    def _pretty_operand(self, operand):
+        if operand == "_" or operand is None:
+            return operand
+        return self.addr_names.get(operand, operand)
+
+    def pretty_quads(self):
+        pretty = deque()
+
+        for quad in self.quads:
+            op, left, right, res = quad
+            pretty.append([
+                op,
+                self._pretty_operand(left),
+                self._pretty_operand(right),
+                self._pretty_operand(res),
+            ])
+
+        return pretty
         
 def main():
     import sys
@@ -336,8 +476,16 @@ def main():
             print(err)
     else:
         print("Compile OK")
+
+    print("Dir fun")
     pprint.pprint(my_compiler.dir_fun)
+
+    print("Real quads")
     pprint.pprint(my_compiler.quads)
+
+    print("Pretty quads")
+    pprint.pprint(my_compiler.pretty_quads())
+
 
 
 if __name__ == "__main__":

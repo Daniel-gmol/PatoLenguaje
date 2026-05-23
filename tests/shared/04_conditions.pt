@@ -1,0 +1,16 @@
+init cond_test;
+val
+    a, b : entero;
+arranca {
+    a = 10;
+    b = 5;
+    si (a > b) {
+        dale("Mayor");
+    };
+    si (a < b) {
+        dale("Menor");
+    } sino {
+        dale("Mayor o igual");
+    };
+}
+acaba
