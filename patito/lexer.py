@@ -1,4 +1,4 @@
-import codecs
+import ast
 import os
 import sys
 from ply import lex
@@ -130,7 +130,7 @@ class PatitoLexer(object):
     # =========================================================================
     def t_LETRERO(self, t):
         r'"[^"]*"'
-        t.value = codecs.decode(t.value[1:-1], "unicode_escape")
+        t.value = ast.literal_eval(t.value)
         return t
 
     def t_CTE_FLOT(self, t):

@@ -66,7 +66,7 @@ class PatitoCompiler(PatitoParser):
         self.dir_fun = {}
         self.curr_scope = id 
         self.glob_scope = id 
-        self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {}, "params": []}
+        self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {} }
 
     # 1.2 Vars
     def p_ng_add_vartable(self, p):
@@ -323,7 +323,7 @@ class PatitoCompiler(PatitoParser):
         self.addr_names[result_addr] = f"t{self.temp_count}"
         self.temp_count += 1
 
-        self.quads.append(["UMINUS", var_addr, "_", result_addr])
+        self.quads.append(["UMINUS", var_addr, "_", result_addr]) #TODO: es lo mejor o manejo como '-'
         self.pilao.append(result_addr)
         self.ptypes.append(var_type)
 
