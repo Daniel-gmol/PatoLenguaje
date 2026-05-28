@@ -60,10 +60,10 @@ class PatitoParser(object):
 
     # 2.1 Programa
     def p_programa(self, p):
-        """programa : PROGRAMA ID ng_add_dirf ';' vars list_funcs INICIO cuerpo FIN
-                    | PROGRAMA ID ng_add_dirf ';' list_funcs INICIO cuerpo FIN
-                    | PROGRAMA ID ng_add_dirf ';' vars INICIO cuerpo FIN
-                    | PROGRAMA ID ng_add_dirf ';' INICIO cuerpo FIN"""
+        """programa : PROGRAMA ID ng_add_dirf ';' vars list_funcs INICIO ng_main cuerpo FIN ng_del_dirf
+                    | PROGRAMA ID ng_add_dirf ';' list_funcs INICIO ng_main cuerpo FIN ng_del_dirf
+                    | PROGRAMA ID ng_add_dirf ';' vars INICIO ng_main cuerpo FIN ng_del_dirf
+                    | PROGRAMA ID ng_add_dirf ';' INICIO ng_main cuerpo FIN ng_del_dirf"""
 
     def p_list_funcs(self, p):
         """list_funcs : funcs list_funcs
@@ -206,8 +206,10 @@ class PatitoParser(object):
 
     _hidden_rules = {
         "p_ng_add_dirf": "ng_add_dirf : ",
-        "p_ng_add_vartable": "ng_add_vartable : ",
+        "p_ng_del_dirf": "ng_del_dirf : ",
+        "p_ng_main": "ng_main : ",
 
+        "p_ng_add_vartable": "ng_add_vartable : ",
         "p_ng_update_type": "ng_update_type : ",
         "p_ng_add_var": "ng_add_var : ",
 

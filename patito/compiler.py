@@ -15,11 +15,14 @@ class PatitoCompiler(PatitoParser):
     PENDING = 111
     ERROR = 201
 
-    def __init__(self):
+    def __init__(self, keep: bool = False):
         super().__init__()
+
+        self.keep = keep
 
         self.memory = VirtualMemory() 
         self.addr_names = {}
+        self.quad_scopes = []
 
         self.dir_fun = None 
         self.curr_scope = None
@@ -38,6 +41,7 @@ class PatitoCompiler(PatitoParser):
     def parse(self, data):
         self.memory = VirtualMemory() 
         self.addr_names = {}
+        self.quad_scopes = []
 
         self.dir_fun = None 
         self.curr_scope = None 
@@ -67,6 +71,18 @@ class PatitoCompiler(PatitoParser):
         self.curr_scope = id 
         self.glob_scope = id 
         self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {} }
+        self._add_quad(["GOTO", '_', '_', '_'])
+
+    def p_ng_main(self, p):
+        """ng_main : """
+        self.quads[0][3] = len(self.quads)
+
+    def p_ng_del_dirf(self, p):
+        """ng_del_dirf : """
+        if not self.keep:
+            self.dir_fun = None 
+            self.curr_scope = None
+            self.glob_scope = None
 
     # 1.2 Vars
     def p_ng_add_vartable(self, p):
@@ -87,7 +103,8 @@ class PatitoCompiler(PatitoParser):
                 details["type"] = var_type
                 details["address"] = address
 
-                self.addr_names[address] = var_id
+                self._register_name(address, var_id)
+                self._add_resource("local", var_type)
 
     def p_ng_add_var(self, p):
         """ng_add_var : """
@@ -106,27 +123,48 @@ class PatitoCompiler(PatitoParser):
                  | tipo ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ';' ng_del_fun"""
         func_id = p[2]
         target_scope = f"__dup_{func_id}" if f"__dup_{func_id}" in self.dir_fun else func_id
-        if target_scope in self.dir_fun:
-            self.dir_fun[target_scope]["params"].reverse()
+        self.dir_fun[target_scope]["params"].reverse()
+        for p in self.dir_fun[target_scope]["params"]:
+            self._add_resource("local", p)
 
     def p_ng_add_fun(self, p):
         """ng_add_fun : """
         func_id = p[-1]
         func_type = p[-2]
+        next_dip = len(self.quads)
 
-        if func_id in self.dir_fun:
+        if func_id in self.dir_fun: #semantics
             self.errors.append(f"Error: Funcion '{func_id}' ya declarada")
             self.curr_scope = f"__dup_{func_id}"
-            self.dir_fun[self.curr_scope] = {"type": func_type, "vars": {}, "params": []}
             self.generate_quads = False
         else:
             self.curr_scope = func_id 
-            self.dir_fun[self.curr_scope] = {"type": func_type, "vars": {}, "params": []}
+        
+        if func_type != 'nil':
+            func_return = '__return_' + func_id
+            address = self.memory.alloc("global", func_type)
+            self.dir_fun[self.glob_scope]["vars"][func_return] = {"type": func_type, "address": address}
+            self._register_name(address, func_return)
+
+        self.dir_fun[self.curr_scope] = {
+            "type": func_type, 
+            "vars": {},
+            "params": [],
+            "resources": {"local_int": 0, "local_float": 0, "temp_int": 0, "temp_float": 0},
+            "dip": next_dip
+        }
+
+        self.memory.reset_local_temps()
+        self.temp_count = 0
 
     def p_ng_del_fun(self, p):
         """ng_del_fun : """
+        if not self.keep:
+            del self.dir_fun[self.curr_scope]["vars"]
         self.curr_scope = self.glob_scope
         self.generate_quads = True
+        self.memory.reset_local_temps()
+        self.temp_count = 0
 
     def p_list_params(self, p):
         """list_params : ID ng_add_var ':' tipo ng_update_type ',' list_params
@@ -173,9 +211,9 @@ class PatitoCompiler(PatitoParser):
             self.ptypes.pop()
         else:
             var_addr = self.memory.alloc_const(print_arg, "string")
-            self.addr_names[var_addr] = print_arg 
+            self._register_name(var_addr, print_arg) 
         
-        self.quads.append(["PRINT", '_', '_', var_addr])
+        self._add_quad(["PRINT", '_', '_', var_addr])
 
     # 1.4.3 Ciclos
     def p_ng_add_jump(self, p):
@@ -193,7 +231,7 @@ class PatitoCompiler(PatitoParser):
 
         jmp_inx_false = self.pjumps.pop()
         jmp_inx_rep = self.pjumps.pop()
-        self.quads.append(['GOTO', '_', '_', jmp_inx_rep])
+        self._add_quad(['GOTO', '_', '_', jmp_inx_rep])
         self.quads[jmp_inx_false][3] = len(self.quads)
 
     # 1.4.4 Condicionales
@@ -205,7 +243,7 @@ class PatitoCompiler(PatitoParser):
         condition = self.pilao.pop()
         self.ptypes.pop() #type condition
         jmp_inx = len(self.quads)
-        self.quads.append(['GOTOF', condition, '_', '_'])
+        self._add_quad(['GOTOF', condition, '_', '_'])
         self.pjumps.append(jmp_inx)
 
     def p_ng_quad_else(self, p):
@@ -216,7 +254,7 @@ class PatitoCompiler(PatitoParser):
         jmp_inx_false = self.pjumps.pop()
 
         jmp_inx = len(self.quads)
-        self.quads.append(['GOTO', '_', '_', '_'])
+        self._add_quad(['GOTO', '_', '_', '_'])
 
         self.quads[jmp_inx_false][3] = len(self.quads)
 
@@ -320,10 +358,11 @@ class PatitoCompiler(PatitoParser):
             return
 
         result_addr = self.memory.alloc("temp", var_type)
-        self.addr_names[result_addr] = f"t{self.temp_count}"
+        self._register_name(result_addr, f"t{self.temp_count}")
         self.temp_count += 1
+        self._add_resource("temp", var_type)
 
-        self.quads.append(["UMINUS", var_addr, "_", result_addr]) #TODO: es lo mejor o manejo como '-'
+        self._add_quad(["UMINUS", var_addr, "_", result_addr]) #TODO: es lo mejor o manejo como '-'
         self.pilao.append(result_addr)
         self.ptypes.append(var_type)
 
@@ -335,7 +374,7 @@ class PatitoCompiler(PatitoParser):
         cte_val = p[-1]
         cte_type = self._get_cte_type(cte_val)
         cte_address = self.memory.alloc_const(cte_val, cte_type)
-        self.addr_names[cte_address] = cte_val
+        self._register_name(cte_address, cte_val)
 
         self.pilao.append(cte_address)
         self.ptypes.append(cte_type)
@@ -350,7 +389,7 @@ class PatitoCompiler(PatitoParser):
         cte_val = -p[-1] if sign == '-' else p[-1]
         cte_type = self._get_cte_type(cte_val)
         cte_address = self.memory.alloc_const(cte_val, cte_type)
-        self.addr_names[cte_address] = cte_val
+        self._register_name(cte_address, cte_val)
 
         self.pilao.append(cte_address)
         self.ptypes.append(cte_type)
@@ -397,6 +436,28 @@ class PatitoCompiler(PatitoParser):
 
         return result_type
     
+    def _register_name(self, address, name):
+        if self.curr_scope not in self.addr_names:
+            self.addr_names[self.curr_scope] = {}
+        self.addr_names[self.curr_scope][address] = name
+    
+    def _add_resource(self, kind, var_type):
+        if self.curr_scope == self.glob_scope:
+            return 
+        
+        if kind == "temp" and var_type == "entero":
+            self.dir_fun[self.curr_scope]["resources"]["temp_int"] += 1
+        elif kind == "temp" and var_type == "flotante":
+            self.dir_fun[self.curr_scope]["resources"]["temp_float"] += 1
+        elif kind == "local" and var_type == "entero":
+            self.dir_fun[self.curr_scope]["resources"]["local_int"] += 1
+        elif kind == "local" and var_type == "flotante":
+            self.dir_fun[self.curr_scope]["resources"]["local_float"] += 1
+
+    def _add_quad(self, quad):
+        self.quads.append(quad)
+        self.quad_scopes.append(self.curr_scope)
+    
     def _create_expr_quad(self):
         right_operand = self.pilao.pop()
         left_operand = self.pilao.pop()
@@ -414,10 +475,11 @@ class PatitoCompiler(PatitoParser):
             return
         
         result_addr = self.memory.alloc("temp", result_type)
-        self.addr_names[result_addr] = f't{self.temp_count}'
+        self._register_name(result_addr, f't{self.temp_count}')
         self.temp_count += 1
+        self._add_resource("temp", result_type)
 
-        self.quads.append([operator, left_operand, right_operand, result_addr])
+        self._add_quad([operator, left_operand, right_operand, result_addr])
         self.pilao.append(result_addr)
         self.ptypes.append(result_type)
     
@@ -437,26 +499,34 @@ class PatitoCompiler(PatitoParser):
             return
         
         quad = [operator, right_operand, "_", left_operand]
-        self.quads.append(quad)
+        self._add_quad(quad)
 
     # =========================================================================
     # 3. Helpers debug 
     # =========================================================================
-    def _pretty_operand(self, operand):
+    def _pretty_operand(self, operand, scope):
         if operand == "_" or operand is None:
             return operand
-        return self.addr_names.get(operand, operand)
+        
+        if scope in self.addr_names and operand in self.addr_names[scope]:
+            return self.addr_names[scope][operand]
+        
+        if "global" in self.addr_names and operand in self.addr_names["global"]:
+            return self.addr_names["global"][operand]
+            
+        return operand
 
     def pretty_quads(self):
         pretty = deque()
 
-        for quad in self.quads:
+        for i, quad in enumerate(self.quads):
             op, left, right, res = quad
+            scope = self.quad_scopes[i]
             pretty.append([
                 op,
-                self._pretty_operand(left),
-                self._pretty_operand(right),
-                self._pretty_operand(res),
+                self._pretty_operand(left, scope),
+                self._pretty_operand(right, scope),
+                self._pretty_operand(res, scope),
             ])
 
         return pretty
@@ -474,11 +544,13 @@ def main():
         default=sys.stdin,
         help="Patito source file (default: stdin)",
     )
-    arg_parser.add_argument("-o", "--optimize", action="store_true", help="Generate parser optimize")
+    arg_parser.add_argument("-o", "--optimize", action="store_true", help="Generate parser optimized")
+    arg_parser.add_argument("-u", "--human", action="store_true", help="Print in human friendly format")
+    arg_parser.add_argument("-k", "--keep", action="store_true", help="Do not delete unncesary attributes from dirfun")
     args = arg_parser.parse_args()
     data = args.file.read()
 
-    my_compiler = PatitoCompiler()
+    my_compiler = PatitoCompiler(args.keep)
     my_compiler.build(optimize=args.optimize) if args.optimize else my_compiler.build()
 
     ok = my_compiler.parse(data)
@@ -489,14 +561,19 @@ def main():
     else:
         print("Compile OK")
 
-    print("Dir fun")
-    pprint.pprint(my_compiler.dir_fun)
+    if args.keep:
+        print("Dir fun")
+        pprint.pprint(my_compiler.dir_fun)
+        print()
 
-    print("Real quads")
-    pprint.pprint(my_compiler.quads)
+    if not args.human:
+        print("Real quads")
+        indexed_code = list(enumerate(my_compiler.quads))
+    else:
+        print("Pretty quads")
+        indexed_code = list(enumerate(my_compiler.pretty_quads()))
 
-    print("Pretty quads")
-    pprint.pprint(my_compiler.pretty_quads())
+    pprint.pprint(indexed_code)
 
 
 

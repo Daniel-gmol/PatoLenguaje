@@ -4,8 +4,16 @@ val
     pi : decimal;
 
 nil imprimeRes(r: entero) {
+    val s : entero;
     {
-        dale("Resultado: ", r);
+        s = 12 * 10;
+        dale("Resultado: ", r * s);
+    }
+};
+
+entero suma(a: entero, b: entero) {
+    {
+        regresa (a + b) / 3;
     }
 };
 

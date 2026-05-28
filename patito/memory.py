@@ -39,6 +39,13 @@ class VirtualMemory:
         self.constants[key] = address
         return address
 
+    def reset_local_temps(self):
+        self.counters[("local", "entero")] = self.memory_division[("local", "entero")][0]
+        self.counters[("local", "flotante")] = self.memory_division[("local", "flotante")][0]
+        self.counters[("temp", "entero")] = self.memory_division[("temp", "entero")][0]
+        self.counters[("temp", "flotante")] = self.memory_division[("temp", "flotante")][0]
+
+
 def main():
     vm = VirtualMemory()
     print(vm.alloc("global", "entero"))
