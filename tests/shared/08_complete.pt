@@ -1,19 +1,28 @@
 init complete;
 val
     x, y, res : entero;
-    pi : decimal;
+    pi, phi : decimal;
 
-nil imprimeRes(r: entero) {
-    val s : entero;
+nil imprimeRes(r: entero, l: decimal) {
     {
-        s = 12 * 10;
-        dale("Resultado: ", r * s);
+        r = 12 * r;
+        phi = 1.618 - l;
+        dale("Resultado: ", r);
+
+        regresa nil;
     }
 };
 
 entero suma(a: entero, b: entero) {
+    val 
+        s : entero;
+        v : decimal;
     {
-        regresa (a + b) / 3;
+        si (a > 1){
+            s = suma(a - 1, b);
+            v = 1.0;
+        };
+        regresa (s + b) / 3;
     }
 };
 
@@ -33,6 +42,10 @@ arranca {
         x = x - 1;
     };
 
-    imprimeRes(res);
+    imprimeRes(res, phi);
+    x = suma(x, y);
+
+    x = 5;
+    hola(x, y)
 }
 acaba

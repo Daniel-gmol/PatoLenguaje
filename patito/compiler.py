@@ -13,7 +13,7 @@ class PatitoCompiler(PatitoParser):
     """
 
     PENDING = 111
-    ERROR = 201
+    ERROR = "ERROR"
 
     def __init__(self, keep: bool = False):
         super().__init__()
@@ -38,6 +38,9 @@ class PatitoCompiler(PatitoParser):
         self.quads = deque()
         self.temp_count = 0
 
+        self.param_inx = 0
+        self.curr_call = None
+
     def parse(self, data):
         self.memory = VirtualMemory() 
         self.addr_names = {}
@@ -57,7 +60,13 @@ class PatitoCompiler(PatitoParser):
         self.quads = deque()
         self.temp_count = 0
 
-        return super().parse(data)
+        self.param_inx = 0
+        self.curr_call = None
+
+        try:
+            return super().parse(data)
+        except PatitoCompilerError:
+            return False
 
     # =========================================================================
     # 1. Reglas de semántica & Generación IR
@@ -70,7 +79,16 @@ class PatitoCompiler(PatitoParser):
         self.dir_fun = {}
         self.curr_scope = id 
         self.glob_scope = id 
-        self.dir_fun[self.curr_scope] = {"type": "nil", "vars": {} }
+        self.dir_fun[self.curr_scope] = {
+            "type": "nil", 
+            "resources": {
+                "local_int": 0,
+                "local_float": 0,
+                "temp_int": 0,
+                "temp_float": 0,
+            },
+            "vars": {}
+        }
         self._add_quad(["GOTO", '_', '_', '_'])
 
     def p_ng_main(self, p):
@@ -124,8 +142,6 @@ class PatitoCompiler(PatitoParser):
         func_id = p[2]
         target_scope = f"__dup_{func_id}" if f"__dup_{func_id}" in self.dir_fun else func_id
         self.dir_fun[target_scope]["params"].reverse()
-        for p in self.dir_fun[target_scope]["params"]:
-            self._add_resource("local", p)
 
     def p_ng_add_fun(self, p):
         """ng_add_fun : """
@@ -137,22 +153,31 @@ class PatitoCompiler(PatitoParser):
             self.errors.append(f"Error: Funcion '{func_id}' ya declarada")
             self.curr_scope = f"__dup_{func_id}"
             self.generate_quads = False
+            self.dir_fun[self.curr_scope] = {
+                "type": func_type, 
+                "vars": {},
+                "params": [],
+                "resources": {"local_int": 0, "local_float": 0, "temp_int": 0, "temp_float": 0},
+                "dips": None,
+                "dipe": None
+            }
         else:
-            self.curr_scope = func_id 
-        
-        if func_type != 'nil':
-            func_return = '__return_' + func_id
-            address = self.memory.alloc("global", func_type)
-            self.dir_fun[self.glob_scope]["vars"][func_return] = {"type": func_type, "address": address}
-            self._register_name(address, func_return)
+            if func_type != 'nil':
+                func_return = '__return_' + func_id
+                address = self.memory.alloc("global", func_type)
+                self.dir_fun[self.glob_scope]["vars"][func_return] = {"type": func_type, "address": address}
+                self._register_name(address, func_return)
+                self._add_resource("local", func_type)
 
-        self.dir_fun[self.curr_scope] = {
-            "type": func_type, 
-            "vars": {},
-            "params": [],
-            "resources": {"local_int": 0, "local_float": 0, "temp_int": 0, "temp_float": 0},
-            "dip": next_dip
-        }
+            self.curr_scope = func_id 
+            self.dir_fun[self.curr_scope] = {
+                "type": func_type, 
+                "vars": {},
+                "params": [],
+                "resources": {"local_int": 0, "local_float": 0, "temp_int": 0, "temp_float": 0},
+                "dips": next_dip,
+                "dipe": None
+            }
 
         self.memory.reset_local_temps()
         self.temp_count = 0
@@ -161,6 +186,9 @@ class PatitoCompiler(PatitoParser):
         """ng_del_fun : """
         if not self.keep:
             del self.dir_fun[self.curr_scope]["vars"]
+        if self.generate_quads:
+            self.dir_fun[self.curr_scope]["dipe"] = len(self.quads)
+            self._add_quad(["ENDFUNC", '_', '_', '_'])
         self.curr_scope = self.glob_scope
         self.generate_quads = True
         self.memory.reset_local_temps()
@@ -199,7 +227,102 @@ class PatitoCompiler(PatitoParser):
         if self.poper and self.poper[-1] == '=':
             self._create_assign_quad()
 
-    # 1.4.2 Imprimir
+    # 1.4.2 Llamadas a funciones
+    def p_ng_quad_call(self, p):
+        """ng_quad_call : """
+        if not self.generate_quads:
+            return
+
+        func_id = p[-1]
+        if self.dir_fun.get(func_id, None) is None:
+            msg = f"Error: La funcion '{func_id}' no esta definida."
+            self.errors.append(msg)
+            raise PatitoCompilerError(msg)
+
+        self._add_quad(['ERA', '_', '_', func_id])
+
+        self.param_inx = 0
+        self.curr_call = func_id
+
+    def p_ng_quad_call_end(self, p):
+        """ng_quad_call_end : """
+        if not self.generate_quads:
+            return
+
+        fun_id = self.curr_call
+        arg_size = self.param_inx
+        par_size = len(self.dir_fun[fun_id]["params"])
+
+        if arg_size != par_size:
+            self.errors.append(f"Error: La funcion '{fun_id}' esperaba {par_size} argumentos y se recibieron {arg_size}")
+        self._add_quad(['GOSUB', '_', '_', fun_id])
+
+        fun_var = '__return_' + fun_id
+        if self.dir_fun[fun_id]["type"] != "nil":
+            fun_addr = self.dir_fun[self.glob_scope]["vars"][fun_var]["address"]
+            fun_type = self.dir_fun[self.glob_scope]["vars"][fun_var]["type"]
+
+            tmp_addr = self.memory.alloc("temp", fun_type)
+            self._register_name(tmp_addr, f"t{self.temp_count}")
+            self.temp_count += 1
+            self._add_resource("temp", fun_type)
+            self._add_quad(['=', fun_addr, '_', tmp_addr])
+            self.pilao.append(tmp_addr)
+            self.ptypes.append(fun_type)
+
+        self.curr_call = None
+        self.param_inx = 0
+
+    def p_ng_quad_arg(self, p):
+        """ng_quad_arg : """
+        if not self.generate_quads:
+            return
+
+        arg = self.pilao.pop()
+        arg_type = self.ptypes.pop()
+
+        if self.param_inx >= len(self.dir_fun[self.curr_call]["params"]):
+            self.errors.append(f"Error: Demasiados argumentos para la funcion '{self.curr_call}'")
+            return
+
+        par_type = self.dir_fun[self.curr_call]["params"][self.param_inx]
+
+        if arg_type != par_type:
+            self.errors.append(f"Error: El tipo {arg_type} del argumento no coincide con el tipo de parametro {par_type}")
+
+        self._add_quad(["PARAM", arg, '_', self.param_inx])
+        self.param_inx += 1
+        
+    def p_ng_quad_ret(self, p):
+        """ng_quad_ret : """
+        if not self.generate_quads:
+            return
+
+        is_nil_return = (p[-1] == "nil")
+
+        if is_nil_return:
+            ret_val = "nil"
+            ret_type = "nil"
+        else:
+            ret_val = self.pilao.pop()
+            ret_type = self.ptypes.pop()
+
+        fun_type = self.dir_fun[self.curr_scope]["type"]
+        if ret_type != fun_type:
+            self.errors.append(f"Error: El tipo {ret_type} del valor de retorno no coincide con el tipo de funcion {fun_type}")
+
+        if self.curr_scope == self.glob_scope:
+            self._add_quad(['END', '_', '_', '_'])
+            return
+        
+        if ret_type != 'nil':
+            global_return = '__return_' + self.curr_scope
+            global_return_addr = self.dir_fun[self.glob_scope]["vars"][global_return]["address"]
+            self._add_quad(['RET', ret_val, '_', global_return_addr])
+
+        self._add_quad(['GOTOEND', '_', '_', self.curr_scope])
+
+    # 1.4.3 Imprimir
     def p_ng_add_print(self, p):
         """ng_add_print : """
         if not self.generate_quads:
@@ -215,7 +338,7 @@ class PatitoCompiler(PatitoParser):
         
         self._add_quad(["PRINT", '_', '_', var_addr])
 
-    # 1.4.3 Ciclos
+    # 1.4.4 Ciclos
     def p_ng_add_jump(self, p):
         """ng_add_jump : """
         if not self.generate_quads:
@@ -234,7 +357,7 @@ class PatitoCompiler(PatitoParser):
         self._add_quad(['GOTO', '_', '_', jmp_inx_rep])
         self.quads[jmp_inx_false][3] = len(self.quads)
 
-    # 1.4.4 Condicionales
+    # 1.4.5 Condicionales
     def p_ng_quad_if(self, p):
         """ng_quad_if : """
         if not self.generate_quads:
@@ -440,24 +563,25 @@ class PatitoCompiler(PatitoParser):
         if self.curr_scope not in self.addr_names:
             self.addr_names[self.curr_scope] = {}
         self.addr_names[self.curr_scope][address] = name
-    
-    def _add_resource(self, kind, var_type):
-        if self.curr_scope == self.glob_scope:
-            return 
+        
+    def _add_resource(self, kind, var_type, scope=None):
+        if scope is None:
+            scope = self.curr_scope
         
         if kind == "temp" and var_type == "entero":
-            self.dir_fun[self.curr_scope]["resources"]["temp_int"] += 1
+            self.dir_fun[scope]["resources"]["temp_int"] += 1
         elif kind == "temp" and var_type == "flotante":
-            self.dir_fun[self.curr_scope]["resources"]["temp_float"] += 1
+            self.dir_fun[scope]["resources"]["temp_float"] += 1
         elif kind == "local" and var_type == "entero":
-            self.dir_fun[self.curr_scope]["resources"]["local_int"] += 1
+            self.dir_fun[scope]["resources"]["local_int"] += 1
         elif kind == "local" and var_type == "flotante":
-            self.dir_fun[self.curr_scope]["resources"]["local_float"] += 1
+            self.dir_fun[scope]["resources"]["local_float"] += 1
 
     def _add_quad(self, quad):
         self.quads.append(quad)
         self.quad_scopes.append(self.curr_scope)
     
+    #TODO: simplify expr quad and assign quad into a single one
     def _create_expr_quad(self):
         right_operand = self.pilao.pop()
         left_operand = self.pilao.pop()
@@ -467,11 +591,18 @@ class PatitoCompiler(PatitoParser):
 
         operator = self.poper.pop()
 
+        if left_type == self.ERROR or right_type == self.ERROR:
+            self.pilao.append(self.ERROR)
+            self.ptypes.append(self.ERROR)
+            return
+
         result_type = self._get_result_type(left_type, operator, right_type)
 
         # print(left_type, operator, right_type, "->", result_type)
         if result_type == self.ERROR:
             self.errors.append(f"Error semántico: operación inválida {left_type} {operator} {right_type}")
+            self.pilao.append(self.ERROR)
+            self.ptypes.append(self.ERROR)
             return
         
         result_addr = self.memory.alloc("temp", result_type)
@@ -492,14 +623,22 @@ class PatitoCompiler(PatitoParser):
 
         operator = self.poper.pop()
 
+        if left_type == self.ERROR or right_type == self.ERROR:
+            self.pilao.append(left_operand)
+            self.ptypes.append(self.ERROR)
+            return
+
         result_type = self._get_result_type(left_type, operator, right_type)
 
         if result_type == self.ERROR:
             self.errors.append(f"Error semántico: asignación inválida {left_type} {operator} {right_type}")
+            self.pilao.append(left_operand)
+            self.ptypes.append(self.ERROR)
             return
         
-        quad = [operator, right_operand, "_", left_operand]
-        self._add_quad(quad)
+        self._add_quad([operator, right_operand, "_", left_operand])
+        self.pilao.append(left_operand)
+        self.ptypes.append(result_type)
 
     # =========================================================================
     # 3. Helpers debug 
@@ -511,8 +650,8 @@ class PatitoCompiler(PatitoParser):
         if scope in self.addr_names and operand in self.addr_names[scope]:
             return self.addr_names[scope][operand]
         
-        if "global" in self.addr_names and operand in self.addr_names["global"]:
-            return self.addr_names["global"][operand]
+        if self.glob_scope in self.addr_names and operand in self.addr_names[self.glob_scope]:
+            return self.addr_names[self.glob_scope][operand]
             
         return operand
 

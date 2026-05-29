@@ -113,20 +113,20 @@ class PatitoParser(object):
                         | llamada ';' list_estatuto
                         | imprime list_estatuto
                         | '[' list_estatuto ']' list_estatuto
-                        | RETURN NULA ';' list_estatuto
-                        | RETURN expresion ';' list_estatuto
+                        | RETURN NULA ng_quad_ret ';' list_estatuto
+                        | RETURN expresion ng_quad_ret ';' list_estatuto
                         | empty"""
 
     def p_asigna(self, p):
         """asigna : ID '=' ng_quad_assign expresion ';' ng_quad_assign_end"""
 
     def p_llamada(self, p):
-        """llamada : ID '(' list_expresion ')'"""
+        """llamada : ID ng_quad_call '(' list_expresion ')' ng_quad_call_end
+                   | ID ng_quad_call '(' ')' ng_quad_call_end"""
 
     def p_list_expresion(self, p):
-        """list_expresion : expresion ',' list_expresion
-                          | expresion
-                          | empty"""
+        """list_expresion : expresion ng_quad_arg ',' list_expresion
+                          | expresion ng_quad_arg"""
 
     def p_imprime(self, p):
         """imprime : ESCRIBE '(' list_imprime ')' ';'"""
@@ -215,6 +215,11 @@ class PatitoParser(object):
 
         "p_ng_add_fun": "ng_add_fun : ",
         "p_ng_del_fun": "ng_del_fun : ",
+
+        "p_ng_quad_ret": "ng_quad_ret : ",
+        "p_ng_quad_call": "ng_quad_call : ",
+        "p_ng_quad_call_end": "ng[_quad_call_end : ",
+        "p_ng_quad_arg": "ng_quad_arg : ",
 
         "p_ng_quad_assign": "ng_quad_assign : ",
         "p_ng_quad_assign_end": "ng_quad_assign_end : ",
