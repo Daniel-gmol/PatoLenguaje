@@ -1,0 +1,31 @@
+init prog;
+    val n, f : entero;
+
+entero fibo(a: entero){
+    {
+        si (a < 0){
+            regresa 0;
+        };
+
+        si (a == 0){
+            regresa 0;
+        };
+
+        si (a == 1){
+            regresa 1;
+        };
+        
+        regresa fibo(a - 1) + fibo(a - 2);
+    }
+};
+
+arranca {
+    n = 10;
+    dale(n, "\n");
+
+    f = fibo(n);
+    dale(f, "\n");
+
+    dale(f + 5, "\n");
+}
+acaba
