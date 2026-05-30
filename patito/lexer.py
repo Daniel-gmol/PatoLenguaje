@@ -160,6 +160,10 @@ class PatitoLexer(object):
     # =========================================================================
     # 5. Ayudantes aka Tokens especiales de PLY
     # =========================================================================
+    def t_COMMENT(self, t):
+        r'\#.*'
+        pass
+
     def t_NEWLINE(self, t):
         r"\n+"
         t.lexer.lineno += len(t.value)
