@@ -110,7 +110,7 @@ class PatitoParser(object):
         """list_estatuto : asigna list_estatuto
                         | condicion list_estatuto
                         | ciclo list_estatuto
-                        | llamada ';' list_estatuto
+                        | llamada_estatuto ';' list_estatuto
                         | imprime list_estatuto
                         | '[' list_estatuto ']' list_estatuto
                         | RETURN NULA ng_quad_ret ';' list_estatuto
@@ -120,9 +120,13 @@ class PatitoParser(object):
     def p_asigna(self, p):
         """asigna : ID '=' ng_quad_assign expresion ';' ng_quad_assign_end"""
 
-    def p_llamada(self, p):
-        """llamada : ID ng_quad_call '(' list_expresion ')' ng_quad_call_end
-                   | ID ng_quad_call '(' ')' ng_quad_call_end"""
+    def p_llamada_estatuto(self, p):
+        """llamada_estatuto : ID ng_quad_call '(' ng_add_false_bottom list_expresion ')' ng_remove_false_bottom ng_quad_call_end_estatuto
+                            | ID ng_quad_call '(' ng_add_false_bottom ')' ng_remove_false_bottom ng_quad_call_end_estatuto"""
+
+    def p_llamada_expr(self, p):
+        """llamada_expr : ID ng_quad_call '(' ng_add_false_bottom list_expresion ')' ng_remove_false_bottom ng_quad_call_end_expr
+                        | ID ng_quad_call '(' ng_add_false_bottom ')' ng_remove_false_bottom ng_quad_call_end_expr"""
 
     def p_list_expresion(self, p):
         """list_expresion : expresion ng_quad_arg ',' list_expresion
@@ -174,7 +178,7 @@ class PatitoParser(object):
                   | '+' cte ng_quad_sign_cte
                   | '-' cte ng_quad_sign_cte
                   | cte ng_quad_cte
-                  | llamada"""
+                  | llamada_expr"""
 
     def p_cte(self, p):
         """cte : CTE_ENT
@@ -218,7 +222,8 @@ class PatitoParser(object):
 
         "p_ng_quad_ret": "ng_quad_ret : ",
         "p_ng_quad_call": "ng_quad_call : ",
-        "p_ng_quad_call_end": "ng[_quad_call_end : ",
+        "p_ng_quad_call_end_expr": "ng_quad_call_end_expr : ",
+        "p_ng_quad_call_end_estatuto": "ng_quad_call_end_estatuto : ",
         "p_ng_quad_arg": "ng_quad_arg : ",
 
         "p_ng_quad_assign": "ng_quad_assign : ",
