@@ -1,4 +1,4 @@
-class VirtualMemory:
+class MemoryAloca:
     def __init__(self):
         self.memory_division = {
             ("global", "entero"): (1_000_000, 1_999_999),
@@ -47,7 +47,7 @@ class VirtualMemory:
 
 
 def main():
-    vm = VirtualMemory()
+    vm = MemoryAloca()
     print(vm.alloc("global", "entero"))
     print(vm.alloc("global", "entero"))     # 1_000_001
     print(vm.alloc("global", "entero"))     # 1_000_002
@@ -57,11 +57,11 @@ def main():
 
     print(vm.alloc("temp", "entero"))         # 5_000_000
 
-    print(vm.get_constant(5, "entero"))     # 7_000_000
-    print(vm.get_constant(5, "entero"))     # 7_000_000
-    print(vm.get_constant(10, "entero"))    # 7_000_001
+    print(vm.alloc_const(5, "entero"))     # 7_000_000
+    print(vm.alloc_const(5, "entero"))     # 7_000_000
+    print(vm.alloc_const(10, "entero"))    # 7_000_001
 
-    print(vm.get_constant(5.5, "flotante")) # 8_000_000
+    print(vm.alloc_const(5.5, "flotante")) # 8_000_000
 
 if __name__ == "__main__":
     main()
