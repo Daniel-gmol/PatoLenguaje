@@ -19,8 +19,15 @@ entero suma(a: entero, b: entero){
     }
 };
 
+nil nohacenada(){
+    {
+        regresa nil;
+    }
+};
+
 arranca {
     i = 10;
+    nohacenada();
 
     j = suma(uno(1), dos(4));
     dale("j: ", j);

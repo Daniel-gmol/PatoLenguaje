@@ -46,6 +46,5 @@ arranca {
     x = suma(x, y);
 
     x = 5;
-    hola(x, y)
 }
 acaba
