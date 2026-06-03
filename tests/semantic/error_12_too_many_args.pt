@@ -1,0 +1,12 @@
+init test;
+
+nil doStuff(a: entero) {
+    {
+        dale(a);
+    }
+}
+
+arranca {
+    doStuff(1, 2, 3, 4);
+}
+acaba

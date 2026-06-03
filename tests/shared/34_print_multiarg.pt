@@ -1,0 +1,13 @@
+init multiprint;
+val
+    a, b, c : entero;
+arranca {
+    a = 1;
+    b = 2;
+    c = 3;
+    dale("Values: ", a, ", ", b, ", ", c, "\n");
+    dale("Sum = ", a + b + c, "\n");
+    dale("Product = ", a * b * c, "\n");
+    dale("a=", a, " b=", b, " c=", c, "\n");
+}
+acaba

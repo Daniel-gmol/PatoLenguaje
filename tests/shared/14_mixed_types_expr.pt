@@ -1,0 +1,32 @@
+init mixed_types;
+val
+    a, b : entero;
+    x, y, z : decimal;
+arranca {
+    a = 5;
+    b = 10;
+    x = 2.5;
+    y = 3.0;
+
+    # entero -> flotante
+    x = a;
+
+    # entero + flotante -> flotante
+    z = a + x;
+    z = b - y;
+    z = a * x;
+    z = b / y;
+
+    # flotante + entero -> flotante
+    z = x + a;
+    z = y - b;
+    z = x * a;
+    z = y / b;
+
+    # flotante op flotante -> flotante
+    z = x + y;
+    z = x * y;
+
+    dale(z, "\n");
+}
+acaba

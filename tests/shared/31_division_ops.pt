@@ -1,0 +1,27 @@
+init division;
+val
+    a, b, c : entero;
+    x, y, z : decimal;
+arranca {
+    # Integer division
+    a = 10;
+    b = 3;
+    c = a / b;
+    dale("10 / 3 = ", c, "\n");
+
+    c = 7 / 2;
+    dale("7 / 2 = ", c, "\n");
+
+    c = 1 / 2;
+    dale("1 / 2 = ", c, "\n");
+
+    # Float division
+    x = 10.0;
+    y = 3.0;
+    z = x / y;
+    dale("10.0 / 3.0 = ", z, "\n");
+
+    z = 7.0 / 2.0;
+    dale("7.0 / 2.0 = ", z, "\n");
+}
+acaba

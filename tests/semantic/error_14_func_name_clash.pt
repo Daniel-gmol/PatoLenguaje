@@ -1,0 +1,12 @@
+init myProg;
+
+nil myProg() {
+    {
+        dale("clash");
+    }
+}
+
+arranca {
+    myProg();
+}
+acaba

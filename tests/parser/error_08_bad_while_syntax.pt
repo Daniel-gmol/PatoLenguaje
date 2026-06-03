@@ -1,0 +1,9 @@
+init test;
+val i : entero;
+arranca {
+    i = 0;
+    esperaque (i < 10) {
+        i = i + 1;
+    }
+}
+acaba

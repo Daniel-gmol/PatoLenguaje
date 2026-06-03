@@ -1,0 +1,30 @@
+init test;
+val result : entero;
+
+# Mutual recursion: isEven calls isOdd, isOdd calls isEven.
+# Regardless of declaration order, one function must reference
+# the other before it's declared. This is NOT supported.
+
+entero isEven(n: entero) {
+    {
+        si (n == 0) {
+            regresa 1;
+        }
+        regresa isOdd(n - 1);
+    }
+}
+
+entero isOdd(n: entero) {
+    {
+        si (n == 0) {
+            regresa 0;
+        }
+        regresa isEven(n - 1);
+    }
+}
+
+arranca {
+    result = isEven(4);
+    dale(result);
+}
+acaba

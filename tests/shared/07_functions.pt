@@ -6,7 +6,7 @@ nil saludar() {
     {
         dale("Hola");
     }
-};
+}
 
 nil sumar(a: entero, b: entero) {
     val
@@ -15,7 +15,7 @@ nil sumar(a: entero, b: entero) {
         res = a + b;
         dale(res);
     }
-};
+}
 
 arranca {
     g = 1;

@@ -5,25 +5,25 @@ entero uno(x: entero){
     {
         regresa x;
     }
-};
+}
 
 entero dos(x: entero){
     {
         regresa x;
     }
-};
+}
 
 entero suma(a: entero, b: entero){
     {
         regresa a + b;
     }
-};
+}
 
 nil nohacenada(){
     {
         regresa nil;
     }
-};
+}
 
 arranca {
     i = 10;

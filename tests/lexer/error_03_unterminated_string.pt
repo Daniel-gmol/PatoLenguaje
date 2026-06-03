@@ -1,0 +1,5 @@
+init test;
+arranca {
+    dale("This string never closes);
+}
+acaba

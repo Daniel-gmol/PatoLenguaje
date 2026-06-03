@@ -1,0 +1,9 @@
+init test;
+val a : entero;
+arranca {
+    a = 5;
+    si a > 3 {
+        dale("big");
+    }
+}
+acaba

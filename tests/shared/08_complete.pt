@@ -11,7 +11,7 @@ nil imprimeRes(r: entero, l: decimal) {
 
         regresa nil;
     }
-};
+}
 
 entero suma(a: entero, b: entero) {
     val 
@@ -21,10 +21,10 @@ entero suma(a: entero, b: entero) {
         si (a > 1){
             s = suma(a - 1, b);
             v = 1.0;
-        };
+        }
         regresa (s + b) / 3;
     }
-};
+}
 
 arranca {
     x = 10;
@@ -36,11 +36,11 @@ arranca {
         dale("Grande");
     } sino {
         dale("Pequeño");
-    };
+    }
 
     esperaque (x > 0) \/ {
         x = x - 1;
-    };
+    }
 
     imprimeRes(res, phi);
     x = suma(x, y);

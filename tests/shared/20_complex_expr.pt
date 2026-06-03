@@ -1,0 +1,14 @@
+init complex;
+val
+    a, b, c : entero;
+arranca {
+    a = 2;
+    b = 3;
+    c = ((((a + b) * (a - b)) + ((a * b) - (a / b))) * ((a + 1) * (b + 1)));
+    dale(c, "\n");
+
+    # deeply nested parentheses
+    c = (((((((a + b)))))));
+    dale(c, "\n");
+}
+acaba

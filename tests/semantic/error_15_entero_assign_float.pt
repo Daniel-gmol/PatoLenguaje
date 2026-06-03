@@ -1,0 +1,9 @@
+init test;
+val
+    a : entero;
+    b : decimal;
+arranca {
+    b = 3.14;
+    a = b;
+}
+acaba

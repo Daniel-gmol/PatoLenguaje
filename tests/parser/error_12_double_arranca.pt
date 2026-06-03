@@ -1,0 +1,8 @@
+init test;
+arranca {
+    dale("first");
+}
+arranca {
+    dale("second");
+}
+acaba

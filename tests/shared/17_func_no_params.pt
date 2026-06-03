@@ -1,0 +1,20 @@
+init no_params;
+
+nil greet() {
+    {
+        dale("Hello!\n");
+        regresa nil;
+    }
+}
+
+entero getFortyTwo() {
+    {
+        regresa 42;
+    }
+}
+
+arranca {
+    greet();
+    dale(getFortyTwo(), "\n");
+}
+acaba

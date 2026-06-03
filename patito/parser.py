@@ -45,14 +45,7 @@ class PatitoParser(object):
         except PatitoSyntaxError:
             return False
 
-    # =========================================================================
-    # 1. Reglas de Precedencia - reducir ambiguedad
-    # =========================================================================
-    precedence = (
-        ("nonassoc", "MAYOR", "MENOR", "IGUAL", "NO"),
-        ("left", "+", "-"),
-        ("left", "*", "/"),
-    )
+
 
     # =========================================================================
     # 2. Reglas Gramaticales
@@ -91,10 +84,10 @@ class PatitoParser(object):
 
     # 2.3 Funciones
     def p_funcs(self, p):
-        """funcs : NULA ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ';' ng_del_fun
-                 | NULA ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ';' ng_del_fun
-                 | tipo ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ';' ng_del_fun
-                 | tipo ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ';' ng_del_fun"""
+        """funcs : NULA ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ng_del_fun
+                 | NULA ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ng_del_fun
+                 | tipo ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ng_del_fun
+                 | tipo ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ng_del_fun"""
     
     def p_list_params(self, p):
         """list_params : ID ng_add_var ':' tipo ng_update_type ',' list_params
@@ -107,18 +100,18 @@ class PatitoParser(object):
 
     # 2.5 Estatutos
     def p_list_estatuto(self, p):
-        """list_estatuto : asigna list_estatuto
+        """list_estatuto : asigna ';' list_estatuto
                         | condicion list_estatuto
                         | ciclo list_estatuto
                         | llamada_estatuto ';' list_estatuto
-                        | imprime list_estatuto
-                        | '[' list_estatuto ']' list_estatuto
+                        | imprime ';' list_estatuto
+                        | lee ';' list_estatuto
                         | RETURN NULA ng_quad_ret ';' list_estatuto
                         | RETURN expresion ng_quad_ret ';' list_estatuto
                         | empty"""
 
     def p_asigna(self, p):
-        """asigna : ID '=' ng_quad_assign expresion ';' ng_quad_assign_end"""
+        """asigna : ID '=' ng_quad_assign expresion ng_quad_assign_end"""
 
     def p_llamada_estatuto(self, p):
         """llamada_estatuto : ID ng_quad_call '(' ng_add_false_bottom list_expresion ')' ng_remove_false_bottom ng_quad_call_end_estatuto
@@ -133,30 +126,58 @@ class PatitoParser(object):
                           | expresion ng_quad_arg"""
 
     def p_imprime(self, p):
-        """imprime : ESCRIBE '(' list_imprime ')' ';'"""
+        """imprime : ESCRIBE '(' list_imprime ')'"""
 
     def p_list_imprime(self, p):
         """list_imprime : expresion ng_add_print ',' list_imprime
                         | LETRERO ng_add_print ',' list_imprime
                         | expresion ng_add_print
                         | LETRERO ng_add_print"""
+    
+    def p_lee(self, p):
+        """lee : LEER '(' list_lee ')'"""
+
+    def p_list_read(self, p):
+        """list_lee : ID ng_quad_read ',' list_lee
+                        | ID ng_quad_read """
 
     def p_ciclo(self, p):
-        """ciclo : MIENTRAS ng_add_jump '(' expresion ')' ng_quad_if HAZ cuerpo ng_quad_while_end ';'"""
+        """ciclo : MIENTRAS ng_add_jump '(' expresion ')' ng_quad_if HAZ cuerpo ng_quad_while_end"""
 
     def p_condicion(self, p):
-        """condicion : SI '(' expresion ')' ng_quad_if cuerpo ';' ng_quad_if_end
-                     | SI '(' expresion ')' ng_quad_if cuerpo SINO ng_quad_else cuerpo ';' ng_quad_if_end"""
+        """condicion : SI '(' expresion ')' ng_quad_if cuerpo ng_quad_if_end
+                     | SI '(' expresion ')' ng_quad_if cuerpo SINO ng_quad_else cuerpo ng_quad_if_end"""
 
     # 2.6 Expresiones
+    # 2.6.1 OR
     def p_expresion(self, p):
-        """expresion : exp ng_quad_exp_end
-                     | exp ng_quad_exp_end relop ng_quad_relop exp ng_quad_exp_end"""
+        """expresion : exp_or """
+
+    def p_exp_or(self, p):
+        """exp_or : exp_xor ng_quad_or_end
+                    | exp_xor ng_quad_or_end O ng_quad_or exp_or ng_quad_or_end"""
+
+    # 2.6.2 XOR 
+    def p_exp_xor(self, p):
+        """exp_xor : exp_and ng_quad_xor_end
+                    | exp_and ng_quad_xor_end XOR ng_quad_xor exp_xor ng_quad_xor_end"""
+
+    # 2.6.3 AND
+    def p_exp_and(self, p):
+        """exp_and : exp_rel ng_quad_and_end
+                    | exp_rel ng_quad_and_end Y ng_quad_and exp_and ng_quad_and_end"""
+
+    # 2.6.4 REL
+    def p_exp_rel(self, p):
+        """exp_rel : exp ng_quad_rel_end
+                     | exp ng_quad_rel_end relop ng_quad_rel exp ng_quad_rel_end"""
 
     def p_relop(self, p):
         """relop : MENOR
                  | MAYOR
-                 | NO
+                 | MENORIGUAL
+                 | MAYORIGUAL
+                 | DIFERENTE
                  | IGUAL"""
         p[0] = p[1]
 
@@ -172,13 +193,13 @@ class PatitoParser(object):
 
     def p_factor(self, p):
         """factor : '(' ng_add_false_bottom expresion ')' ng_remove_false_bottom 
-                  | '+' ID ng_quad_sign_id
-                  | '-' ID ng_quad_sign_id
+                  | '+' factor ng_quad_unary_plus
+                  | '-' factor ng_quad_unary_minus
+                  | NO factor ng_quad_no
                   | ID ng_quad_id
-                  | '+' cte ng_quad_sign_cte
-                  | '-' cte ng_quad_sign_cte
                   | cte ng_quad_cte
                   | llamada_expr"""
+                  
 
     def p_cte(self, p):
         """cte : CTE_ENT
@@ -230,6 +251,7 @@ class PatitoParser(object):
         "p_ng_quad_assign_end": "ng_quad_assign_end : ",
 
         "p_ng_add_print": "ng_add_print : ",
+        "p_ng_quad_read": "ng_quad_read : ",
 
         "p_ng_add_jump": "ng_add_jump : ",
         "p_ng_quad_while_end": "ng_quad_while_end : ",
@@ -238,8 +260,15 @@ class PatitoParser(object):
         "p_ng_quad_else": "ng_quad_else : ",
         "p_ng_quad_if_end": "ng_quad_if_end : ",
 
-        "p_ng_quad_exp_end": "ng_quad_exp_end : ",
-        "p_ng_quad_relop": "ng_quad_relop : ",
+        "p_ng_quad_or": "ng_quad_or : ",
+        "p_ng_quad_or_end": "ng_quad_or_end : ",
+        "p_ng_quad_xor": "ng_quad_xor : ",
+        "p_ng_quad_xor_end": "ng_quad_xor_end : ",
+        "p_ng_quad_and": "ng_quad_and : ",
+        "p_ng_quad_and_end": "ng_quad_and_end : ",
+        
+        "p_ng_quad_rel": "ng_quad_rel : ",
+        "p_ng_quad_rel_end": "ng_quad_rel_end : ",
 
         "p_ng_quad_term": "ng_quad_term : ",
         "p_ng_quad_term_end": "ng_quad_term_end : ",
@@ -247,10 +276,11 @@ class PatitoParser(object):
         "p_ng_quad_fact": "ng_quad_fact : ",
         "p_ng_quad_fact_end": "ng_quad_fact_end : ",
 
+        "p_ng_quad_no": "ng_quad_no : ",
         "p_ng_quad_id": "ng_quad_id : ",
-        "p_ng_quad_sign_id": "ng_quad_sign_id : ",
+        "p_ng_quad_unary_plus": "ng_quad_unary_plus : ",
+        "p_ng_quad_unary_minus": "ng_quad_unary_minus : ",
         "p_ng_quad_cte": "ng_quad_cte : ",
-        "p_ng_quad_sign_cte": "ng_quad_sign_cte : ",
 
         "p_ng_add_false_bottom": "ng_add_false_bottom : ",
         "p_ng_remove_false_bottom": "ng_remove_false_bottom : ",

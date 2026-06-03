@@ -129,10 +129,10 @@ class PatitoCompiler(PatitoParser):
     
     # 1.3 Functions
     def p_funcs(self, p):
-        """funcs : NULA ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ';' ng_del_fun
-                 | NULA ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ';' ng_del_fun
-                 | tipo ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ';' ng_del_fun
-                 | tipo ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ';' ng_del_fun"""
+        """funcs : NULA ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ng_del_fun
+                 | NULA ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ng_del_fun
+                 | tipo ID ng_add_fun '(' list_params ')' '{' vars cuerpo '}' ng_del_fun
+                 | tipo ID ng_add_fun '(' list_params ')' '{' cuerpo '}' ng_del_fun"""
         func_id = p[2]
         self.dir_fun[func_id]["params"].reverse()
 
@@ -298,7 +298,14 @@ class PatitoCompiler(PatitoParser):
         
         self._add_quad(["PRINT", '_', '_', var_addr])
 
-    # 1.4.4 Ciclos
+    # 1.4.4 Leer
+    def p_ng_quad_read(self, p):
+        """ng_quad_read : """
+        id = p[-1]
+        id_type, id_addr = self._lookup_var(id)
+        self._add_quad(["READ", '_', '_', id_addr])
+
+    # 1.4.5 Ciclos
     def p_ng_add_jump(self, p):
         """ng_add_jump : """
         jump_inx = len(self.quads)
@@ -311,7 +318,7 @@ class PatitoCompiler(PatitoParser):
         self._add_quad(['GOTO', '_', '_', jmp_inx_rep])
         self.quads[jmp_inx_false][3] = len(self.quads)
 
-    # 1.4.5 Condicionales
+    # 1.4.6 Condicionales
     def p_ng_quad_if(self, p):
         """ng_quad_if : """
         condition = self.pilao.pop()
@@ -345,16 +352,51 @@ class PatitoCompiler(PatitoParser):
         """ng_remove_false_bottom : """
         self.poper.pop()
 
-    def p_ng_quad_relop(self, p):
-        """ng_quad_relop : """
+    # 1.5.1 OR
+    def p_ng_quad_or(self, p):
+        """ng_quad_or : """
         op = p[-1]
         self.poper.append(op)
 
-    def p_ng_quad_exp_end(self, p):
-        """ng_quad_exp_end : """
-        if self.poper and self.poper[-1] in ['>', '<', '!=', '==']:
+    def p_ng_quad_or_end(self, p):
+        """ng_quad_or_end : """
+        if self.poper and self.poper[-1] == 'oo':
             self._create_expr_quad()
 
+    #1.5.2 XOR
+    def p_ng_quad_xor(self, p):
+        """ng_quad_xor : """
+        op = p[-1]
+        self.poper.append(op)
+
+    def p_ng_quad_xor_end(self, p):
+        """ng_quad_xor_end : """
+        if self.poper and self.poper[-1] == 'xo':
+            self._create_expr_quad()
+
+    #1.5.3 AND
+    def p_ng_quad_and(self, p):
+        """ng_quad_and : """
+        op = p[-1]
+        self.poper.append(op)
+
+    def p_ng_quad_and_end(self, p):
+        """ng_quad_and_end : """
+        if self.poper and self.poper[-1] == 'yy':
+            self._create_expr_quad()
+
+    #1.5.4 Relational
+    def p_ng_quad_rel(self, p):
+        """ng_quad_rel : """
+        op = p[-1]
+        self.poper.append(op)
+
+    def p_ng_quad_rel_end(self, p):
+        """ng_quad_rel_end : """
+        if self.poper and self.poper[-1] in ['>', '<', '!=', '==', '>=', '<=']:
+            self._create_expr_quad()
+
+    #1.5.5 term
     def p_ng_quad_term(self, p):
         """ng_quad_term : """
         op = p[-1]
@@ -365,6 +407,7 @@ class PatitoCompiler(PatitoParser):
         if self.poper and self.poper[-1] in ['+', '-']:
             self._create_expr_quad()
 
+    #1.5.6 Factor
     def p_ng_quad_fact(self, p):
         """ng_quad_fact : """
         op = p[-1]
@@ -374,6 +417,18 @@ class PatitoCompiler(PatitoParser):
         """ng_quad_fact_end : """
         if self.poper and self.poper[-1] in ['*', '/']:
             self._create_expr_quad()
+    
+    def p_ng_quad_no(self, p):
+        """ng_quad_no : """
+        operand = self.pilao.pop()
+        operand_type = self.ptypes.pop()
+
+        result_type = self._get_result_type(operand_type, "no", operand_type)
+        result_addr = self._alloc_temp(result_type)
+
+        self._add_quad(["no", operand, "_", result_addr])
+        self._push_operand(result_addr, result_type)
+
 
     def p_ng_quad_id(self, p):
         """ng_quad_id : """
@@ -382,29 +437,30 @@ class PatitoCompiler(PatitoParser):
 
         self._push_operand(var_addr, var_type)
 
-    def p_ng_quad_sign_id(self, p):
-        """ng_quad_sign_id : """
-        sign = p[-2]
+    def p_ng_quad_unary_plus(self, p):
+        """ng_quad_unary_plus : """
+        pass  # operand already on stack, nothing to do
 
-        var_id = p[-1]
-        var_type, var_addr = self._lookup_var(var_id)
+    def p_ng_quad_unary_minus(self, p):
+        """ng_quad_unary_minus : """
+        operand = self.pilao.pop()
+        op_type = self.ptypes.pop()
 
-        if sign == "+":
-            self._push_operand(var_addr, var_type)
-            return
+        # Constant folding: if operand is a constant, fold it directly
+        if 7_000_000 <= operand <= 8_999_999:
+            for (val, typ), addr in self.memory.constants.items():
+                if addr == operand:
+                    self._push_const(-val)
+                    return
 
-        result_addr = self._alloc_temp(var_type)
-        self._add_quad(["UMINUS", var_addr, "_", result_addr])
-        self._push_operand(result_addr, var_type)
+        # General case: emit UMINUS quad
+        result_addr = self._alloc_temp(op_type)
+        self._add_quad(["UMINUS", operand, "_", result_addr])
+        self._push_operand(result_addr, op_type)
 
     def p_ng_quad_cte(self, p):
         """ng_quad_cte : """
         self._push_const(p[-1])
-
-    def p_ng_quad_sign_cte(self, p):
-        """ng_quad_sign_cte : """
-        cte_val = -p[-1] if p[-2] == '-' else p[-1]
-        self._push_const(cte_val)
 
     # =========================================================================
     # 2. Helpers para semántica

@@ -1,0 +1,13 @@
+init io;
+    val x, y : decimal;
+        a, b : entero;
+
+arranca{
+    dame(a, b);
+    dale(a, " ", b, "\n");
+
+    dame(x, y);
+    dale(x, " ", y, "\n");
+
+}
+acaba

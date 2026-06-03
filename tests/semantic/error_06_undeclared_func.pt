@@ -1,0 +1,5 @@
+init test;
+arranca {
+    fantasma(5);
+}
+acaba

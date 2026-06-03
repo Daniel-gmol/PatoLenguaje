@@ -5,19 +5,19 @@ entero fibo(a: entero){
     {
         si (a < 0){
             regresa 0;
-        };
+        }
 
         si (a == 0){
             regresa 0;
-        };
+        }
 
         si (a == 1){
             regresa 1;
-        };
+        }
         
         regresa fibo(a - 1) + fibo(a - 2);
     }
-};
+}
 
 arranca {
     n = 10;

@@ -1,0 +1,14 @@
+init test;
+
+nil myFunc() {
+    val
+        x, x : entero;
+    {
+        x = 1;
+    }
+}
+
+arranca {
+    myFunc();
+}
+acaba

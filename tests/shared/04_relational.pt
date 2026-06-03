@@ -1,0 +1,31 @@
+init relational;
+
+val x, y: entero;
+    a, b: decimal;
+
+arranca{
+    si (5 > 3) {
+        dale("5 es mayor a 3\n");
+    }
+
+    si (3 < 5) {
+        dale("3 es menor a 5\n");
+    }
+
+    si (5 == 5) {
+        dale("5 es igual a 5\n");
+    }
+
+    si (5 != 3) {
+        dale("5 es diferente a 3\n");
+    }
+
+    si (5 >= 5) {
+        dale("5 es mayor o igual a 5\n");
+    }
+
+    si (5 <= 5) {
+        dale("5 es menor o igual a 5\n");
+    }
+}
+acaba

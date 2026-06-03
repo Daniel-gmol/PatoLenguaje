@@ -1,0 +1,34 @@
+init unary_general;
+val
+    a, b, c : entero;
+    x, y : decimal;
+arranca {
+    a = 10;
+    b = 3;
+    x = 2.5;
+
+    # Unary minus on parenthesized expression (PREVIOUSLY BROKEN)
+    c = -(a + b);
+    dale(c, "\n");
+
+    # Unary minus on complex expression
+    c = -(a * b - 1);
+    dale(c, "\n");
+
+    # Nested unary (double negation)
+    c = -(-a);
+    dale(c, "\n");
+
+    # Unary plus on parenthesized expression
+    c = +(a + b);
+    dale(c, "\n");
+
+    # Constant folding still works
+    c = -5;
+    dale(c, "\n");
+
+    # Unary on float expression
+    y = -(x * 2.0);
+    dale(y, "\n");
+}
+acaba

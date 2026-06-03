@@ -28,7 +28,13 @@ class PatitoLexer(object):
         "esperaque": "MIENTRAS",
         # Misc
         "dale": "ESCRIBE",
+        "dame": "LEER",
         "regresa": "RETURN",
+        # Operadores logicos
+        "yy": "Y",
+        "oo": "O",
+        "no": "NO",
+        "xo": "XOR",
     }
 
     tokens: list[str] = [
@@ -43,7 +49,9 @@ class PatitoLexer(object):
         # Operadores relacionles
         "MENOR",
         "MAYOR",
-        "NO",
+        "MENORIGUAL",
+        "MAYORIGUAL",
+        "DIFERENTE",
         "IGUAL",
     ]
     tokens = list(set(tokens) | set(reserved.values()))  # CUIDADO
@@ -152,16 +160,18 @@ class PatitoLexer(object):
         return t
 
     t_HAZ = r"\\\/"
+    t_DIFERENTE = r"!="
+    t_IGUAL = r"=="
+    t_MENORIGUAL = r"<="
+    t_MAYORIGUAL = r">="
     t_MENOR = r"<"
     t_MAYOR = r">"
-    t_NO = r"!="
-    t_IGUAL = r"=="
 
     # =========================================================================
     # 5. Ayudantes aka Tokens especiales de PLY
     # =========================================================================
     def t_COMMENT(self, t):
-        r'\#.*'
+        r"\#.*"
         pass
 
     def t_NEWLINE(self, t):

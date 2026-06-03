@@ -1,0 +1,11 @@
+init test;
+
+nil myfunc {
+    {
+        dale("hi");
+    }
+}
+
+arranca {
+}
+acaba

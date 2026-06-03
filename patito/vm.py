@@ -35,6 +35,14 @@ class MemoryRuntime:
     def pop_frame(self):
         self.call_stack.pop()
 
+    def get_expected_type(self, address):
+        if 1_000_000 <= address <= 1_999_999 or 3_000_000 <= address <= 3_999_999 or 5_000_000 <= address <= 5_999_999 or 7_000_000 <= address <= 7_999_999:
+            return 'entero'
+        elif 2_000_000 <= address <= 2_999_999 or 4_000_000 <= address <= 4_999_999 or 6_000_000 <= address <= 6_999_999 or 8_000_000 <= address <= 8_999_999:
+            return 'flotante'
+        else:
+            raise Exception(f"Invalid memory address: {address}")
+
 
 class VirtualMachine:
     def __init__(self, compiler):
@@ -61,6 +69,34 @@ class VirtualMachine:
             return 3_000_000 + int_count
         else:
             return 4_000_000 + float_count
+    
+    def _runtime_type_check(self, usr_i, id_addr):
+        expected_type = self.memory.get_expected_type(id_addr)
+        try:
+            if expected_type == 'entero':
+                return int(usr_i)
+            elif expected_type == 'flotante':
+                return float(usr_i)
+            else:
+                raise Exception("Runtime type error")
+        except ValueError:
+            raise Exception(f"Type mismatch: cannot convert '{usr_i}' to {expected_type}")
+
+    BINARY_OPS = {
+        '+':  lambda l, r: l + r,
+        '-':  lambda l, r: l - r,
+        '*':  lambda l, r: l * r,
+        '/':  lambda l, r: l // r if isinstance(l, int) and isinstance(r, int) else l / r,
+        '<':  lambda l, r: int(l < r),
+        '>':  lambda l, r: int(l > r),
+        '<=': lambda l, r: int(l <= r),
+        '>=': lambda l, r: int(l >= r),
+        '==': lambda l, r: int(l == r),
+        '!=': lambda l, r: int(l != r),
+        'yy': lambda l, r: int(bool(l) and bool(r)),
+        'oo': lambda l, r: int(bool(l) or bool(r)),
+        'xo': lambda l, r: int(bool(l) ^ bool(r)),
+    }
 
     def run(self):
         while self.ip < len(self.quads):
@@ -70,48 +106,14 @@ class VirtualMachine:
             right = quad[2]
             res = quad[3]
 
-            if op == '+':
+            if op in self.BINARY_OPS:
                 l_val = self.memory.get_value(left)
                 r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val + r_val)
+                self.memory.set_value(res, self.BINARY_OPS[op](l_val, r_val))
                 self.ip += 1
-            elif op == '-':
+            elif op == 'no':
                 l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val - r_val)
-                self.ip += 1
-            elif op == '*':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val * r_val)
-                self.ip += 1
-            elif op == '/':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                if isinstance(l_val, int) and isinstance(r_val, int):
-                    self.memory.set_value(res, l_val // r_val)
-                else:
-                    self.memory.set_value(res, l_val / r_val)
-                self.ip += 1
-            elif op == '<':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val < r_val)
-                self.ip += 1
-            elif op == '>':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val > r_val)
-                self.ip += 1
-            elif op == '==':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val == r_val)
-                self.ip += 1
-            elif op == '!=':
-                l_val = self.memory.get_value(left)
-                r_val = self.memory.get_value(right)
-                self.memory.set_value(res, l_val != r_val)
+                self.memory.set_value(res, int(not bool(l_val)))
                 self.ip += 1
             elif op == '=':
                 r_val = self.memory.get_value(left)
@@ -124,6 +126,11 @@ class VirtualMachine:
             elif op == 'PRINT':
                 val = self.memory.get_value(res)
                 print(val, end='')
+                self.ip += 1
+            elif op == 'READ':
+                usr_input = input()
+                converted_input = self._runtime_type_check(usr_input, res)
+                self.memory.set_value(res, converted_input)
                 self.ip += 1
             elif op == 'GOTO':
                 self.ip = res

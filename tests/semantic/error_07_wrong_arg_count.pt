@@ -1,0 +1,12 @@
+init test;
+
+nil saludar(a: entero, b: entero) {
+    {
+        dale(a + b);
+    }
+}
+
+arranca {
+    saludar(1, 2, 3);
+}
+acaba

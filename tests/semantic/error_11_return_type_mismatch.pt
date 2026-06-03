@@ -1,0 +1,12 @@
+init test;
+
+entero getVal() {
+    {
+        regresa 3.14;
+    }
+}
+
+arranca {
+    dale(getVal());
+}
+acaba

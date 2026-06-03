@@ -1,0 +1,12 @@
+init test;
+
+nil process(x: entero) {
+    {
+        dale(x);
+    }
+}
+
+arranca {
+    process(3.14);
+}
+acaba

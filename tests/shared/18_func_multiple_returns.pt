@@ -1,0 +1,32 @@
+init multi_ret;
+
+entero abs(x: entero) {
+    {
+        si (x < 0) {
+            regresa -x;
+        } sino {
+            regresa x;
+        }
+    }
+}
+
+entero clamp(v: entero, lo: entero, hi: entero) {
+    {
+        si (v < lo) {
+            regresa lo;
+        }
+        si (v > hi) {
+            regresa hi;
+        }
+        regresa v;
+    }
+}
+
+arranca {
+    dale(abs(-10), "\n");
+    dale(abs(5), "\n");
+    dale(clamp(50, 0, 100), "\n");
+    dale(clamp(-5, 0, 100), "\n");
+    dale(clamp(200, 0, 100), "\n");
+}
+acaba

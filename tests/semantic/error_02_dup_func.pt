@@ -5,13 +5,13 @@ nil f(x : entero) {
     {
         a = 1;
     }
-};
+}
 
 nil f(y : decimal) {
     {
         a = 2;
     }
-};
+}
 
 arranca
 {

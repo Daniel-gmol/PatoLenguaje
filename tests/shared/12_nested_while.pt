@@ -1,0 +1,21 @@
+init nested_while;
+val
+    i, j, k, count : entero;
+arranca {
+    count = 0;
+    i = 0;
+    esperaque (i < 3) \/ {
+        j = 0;
+        esperaque (j < 3) \/ {
+            k = 0;
+            esperaque (k < 3) \/ {
+                count = count + 1;
+                k = k + 1;
+            }
+            j = j + 1;
+        }
+        i = i + 1;
+    }
+    dale(count, "\n");
+}
+acaba

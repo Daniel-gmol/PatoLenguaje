@@ -1,0 +1,13 @@
+init test;
+val a : entero;
+
+nil nada() {
+    {
+        regresa nil;
+    }
+}
+
+arranca {
+    a = nada() + 1;
+}
+acaba

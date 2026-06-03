@@ -1,0 +1,30 @@
+init logical;
+    val x, y: entero;
+        a, b: decimal;
+
+arranca{
+    x = 5;
+    y = 10;
+
+    si(x == 5 yy y == 10){
+        dale("X es 5 y Y es 10\n");
+    }
+    
+    si (x == 5 oo y == 0){
+        dale("X es 5 o Y es 10\n");
+    }
+
+    si(no x == 0 yy no y == 1){
+        dale("No X es 0 y no Y es 1\n");
+    }
+
+    x = x xo y;
+    y = x xo y;
+    x = x xo y;
+
+    si(x == 10 yy y == 5){
+        dale("Swap funcino");
+    }
+
+}
+acaba

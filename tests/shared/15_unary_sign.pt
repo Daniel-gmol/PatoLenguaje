@@ -1,0 +1,31 @@
+init unary;
+val
+    a, b : entero;
+    x, y : decimal;
+arranca {
+    a = 10;
+    x = 2.5;
+
+    # Unary minus on variable
+    b = -a;
+    y = -x;
+
+    # Unary plus on variable (should be identity)
+    b = +a;
+    y = +x;
+
+    # Unary minus on constant
+    b = -5;
+    y = -3.14;
+
+    # Unary plus on constant
+    b = +7;
+    y = +1.0;
+
+    # Unary in expression
+    b = -a + 20;
+    y = -x * 2.0;
+
+    dale(b, " ", y, "\n");
+}
+acaba
