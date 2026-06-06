@@ -602,6 +602,8 @@ def main():
     arg_parser.add_argument("-u", "--human", action="store_true", help="Print in human friendly format")
     arg_parser.add_argument("-k", "--keep", action="store_true", help="Do not delete unncesary attributes from dirfun")
     arg_parser.add_argument("-r", "--run", action="store_true", help="Run the compiled program using the Virtual Machine")
+    arg_parser.add_argument("--debug-comp", action="store_true", help="Print compiler debug information (dir fun, quads, etc)")
+    arg_parser.add_argument("--debug-vm", action="store_true", help="Run Virtual Machine in debug mode")
     args = arg_parser.parse_args()
     data = args.file.read()
 
@@ -613,31 +615,31 @@ def main():
     if not ok:
         for err in my_compiler.errors:
             print(err)
-    else:
+    elif args.debug_comp:
         print("Compile OK")
 
-    print("Dir fun")
-    pprint.pprint(my_compiler.dir_fun)
-    print()
+    if args.debug_comp:
+        print("Dir fun")
+        pprint.pprint(my_compiler.dir_fun)
+        print()
 
-    print("Const")
-    pprint.pprint(my_compiler.memory.constants)
-    print()
+        print("Const")
+        pprint.pprint(my_compiler.memory.constants)
+        print()
 
-    if not args.human:
-        print("Real quads")
-        indexed_code = list(enumerate(my_compiler.quads))
-    else:
-        print("Pretty quads")
-        indexed_code = list(enumerate(my_compiler.pretty_quads()))
+        if not args.human:
+            print("Real quads")
+            indexed_code = list(enumerate(my_compiler.quads))
+        else:
+            print("Pretty quads")
+            indexed_code = list(enumerate(my_compiler.pretty_quads()))
 
-    pprint.pprint(indexed_code)
+        pprint.pprint(indexed_code)
 
     if args.run and ok:
         from .vm import VirtualMachine
         vm = VirtualMachine(my_compiler)
-        vm.run()
-
+        vm.run(debug=args.debug_vm)
 
 if __name__ == "__main__":
     main()

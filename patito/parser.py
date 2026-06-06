@@ -22,16 +22,11 @@ class PatitoParser(object):
 
     def build(self, **kwargs):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        cache_dir = os.path.join(current_dir, ".ply_cache")
-        os.makedirs(cache_dir, exist_ok=True)
-
-        if cache_dir not in sys.path:
-            sys.path.insert(0, cache_dir)
 
         self.parser = yacc.yacc(
             module=self,
             tabmodule="parsetab",
-            outputdir=cache_dir,
+            outputdir=current_dir,
             **kwargs
         )
 

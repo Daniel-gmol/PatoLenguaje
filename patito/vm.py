@@ -5,26 +5,28 @@ class MemoryRuntime:
         self.call_stack = [{}]
 
     def get_value(self, address):
+        segment = address // 1_000_000
         val = None
-        if 1_000_000 <= address <= 2_999_999:
+        if segment == 1 or segment == 2:
             val = self.global_mem.get(address)
-        elif 3_000_000 <= address <= 6_999_999:
+        elif 3 <= segment <= 6:
             val = self.call_stack[-1].get(address)
-        elif 7_000_000 <= address <= 9_999_999:
+        elif 7 <= segment <= 9:
             val = self.const_mem.get(address)
         else:
             raise Exception(f"Invalid memory address: {address}")
 
         if val is None:
-            if 2_000_000 <= address <= 2_999_999 or 4_000_000 <= address <= 4_999_999 or 6_000_000 <= address <= 6_999_999 or 8_000_000 <= address <= 8_999_999:
+            if segment in (2, 4, 6, 8):
                 return 0.0
             return 0
         return val
 
     def set_value(self, address, value):
-        if 1_000_000 <= address <= 2_999_999:
+        segment = address // 1_000_000
+        if segment == 1 or segment == 2:
             self.global_mem[address] = value
-        elif 3_000_000 <= address <= 6_999_999:
+        elif 3 <= segment <= 6:
             self.call_stack[-1][address] = value
         else:
             raise Exception(f"Cannot set value for address: {address}")
@@ -36,9 +38,10 @@ class MemoryRuntime:
         self.call_stack.pop()
 
     def get_expected_type(self, address):
-        if 1_000_000 <= address <= 1_999_999 or 3_000_000 <= address <= 3_999_999 or 5_000_000 <= address <= 5_999_999 or 7_000_000 <= address <= 7_999_999:
+        segment = address // 1_000_000
+        if segment in (1, 3, 5, 7):
             return 'entero'
-        elif 2_000_000 <= address <= 2_999_999 or 4_000_000 <= address <= 4_999_999 or 6_000_000 <= address <= 6_999_999 or 8_000_000 <= address <= 8_999_999:
+        elif segment in (2, 4, 6, 8):
             return 'flotante'
         else:
             raise Exception(f"Invalid memory address: {address}")
@@ -53,22 +56,42 @@ class VirtualMachine:
         self.ip = 0
         self.call_stack_ip = []
         self.pending_calls = []
-
-    def get_param_address(self, func_id, param_idx):
-        int_count = 0
-        float_count = 0
         
-        for i in range(param_idx):
-            if self.dir_fun[func_id]["params"][i] == 'entero':
-                int_count += 1
-            else:
-                float_count += 1
-                
-        target_type = self.dir_fun[func_id]["params"][param_idx]
-        if target_type == 'entero':
-            return 3_000_000 + int_count
-        else:
-            return 4_000_000 + float_count
+        self._prepass()
+
+    def _prepass(self):
+        param_addresses = {}
+        for func_id, func_data in self.dir_fun.items():
+            if "params" not in func_data:
+                continue
+            param_addresses[func_id] = []
+            int_count = 0
+            float_count = 0
+            for p_type in func_data["params"]:
+                if p_type == 'entero':
+                    param_addresses[func_id].append(3_000_000 + int_count)
+                    int_count += 1
+                else:
+                    param_addresses[func_id].append(4_000_000 + float_count)
+                    float_count += 1
+
+        active_eras = []
+        for quad in self.quads:
+            op = quad[0]
+            if op == 'ERA':
+                active_eras.append(quad[3])
+            elif op == 'PARAM':
+                func_id = active_eras[-1]
+                param_idx = quad[3]
+                quad[3] = param_addresses[func_id][param_idx] 
+            elif op == 'GOSUB':
+                func_id = quad[3]
+                quad[3] = self.dir_fun[func_id]["dips"]
+                active_eras.pop()
+            elif op == 'GOTOEND':
+                func_id = quad[3]
+                quad[3] = self.dir_fun[func_id]["dipe"]
+
     
     def _runtime_type_check(self, usr_i, id_addr):
         expected_type = self.memory.get_expected_type(id_addr)
@@ -98,8 +121,15 @@ class VirtualMachine:
         'xo': lambda l, r: int(bool(l) ^ bool(r)),
     }
 
-    def run(self):
+    def run(self, debug=False):
         while self.ip < len(self.quads):
+            if debug:
+                print(f"\nIP={self.ip}")
+                print(f"Quad: {self.quads[self.ip]}")
+                print(f"Call Stack: {self.memory.call_stack}")
+                print(f"Global Mem: {self.memory.global_mem}")
+                print(f"Constants Mem: {self.memory.const_mem}")
+            
             quad = self.quads[self.ip]
             op = quad[0]
             left = quad[1]
@@ -147,27 +177,26 @@ class VirtualMachine:
                 else:
                     self.ip += 1
             elif op == 'ERA':
-                self.pending_calls.append({"func_id": res, "frame": {}})
+                self.pending_calls.append({"frame": {}})
                 self.ip += 1
             elif op == 'PARAM':
                 val = self.memory.get_value(left)
                 call = self.pending_calls[-1]
-                param_idx = res
-                target_addr = self.get_param_address(call["func_id"], param_idx)
+                target_addr = res
                 call["frame"][target_addr] = val
                 self.ip += 1
             elif op == 'GOSUB':
                 call = self.pending_calls.pop()
                 self.memory.push_frame(call["frame"])
                 self.call_stack_ip.append(self.ip + 1)
-                self.ip = self.dir_fun[res]["dips"]
+                self.ip = res 
             elif op == 'RET':
                 val = self.memory.get_value(left)
                 global_return_addr = res
                 self.memory.set_value(global_return_addr, val)
                 self.ip += 1
             elif op == 'GOTOEND':
-                self.ip = self.dir_fun[res]["dipe"]
+                self.ip = res
             elif op == 'ENDFUNC':
                 self.memory.pop_frame()
                 self.ip = self.call_stack_ip.pop()

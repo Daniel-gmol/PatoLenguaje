@@ -82,16 +82,11 @@ class PatitoLexer(object):
 
     def build(self, **kwargs) -> None:
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        cache_dir = os.path.join(current_dir, ".ply_cache")
-        os.makedirs(cache_dir, exist_ok=True)
-
-        if cache_dir not in sys.path:
-            sys.path.insert(0, cache_dir)
 
         self.lexer = lex.lex(
             module=self,
             lextab="lextab",
-            outputdir=cache_dir,
+            outputdir=current_dir,
             **kwargs
         )
 
@@ -157,6 +152,8 @@ class PatitoLexer(object):
         r"[A-Za-z][A-Za-z0-9_]*"
         key = t.value.lower()
         t.type = self.reserved.get(key, "ID")
+        if t.type != "ID":
+            t.value = key
         return t
 
     t_HAZ = r"\\\/"
