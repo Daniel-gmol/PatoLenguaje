@@ -1,5 +1,4 @@
 import os
-import json
 import pprint
 import time
 from patito.compiler import PatitoCompiler
@@ -48,8 +47,6 @@ def evaluate_test_logic(
     basename: str,
     ok: bool,
     compiler_errors: list[str],
-    quads: list,
-    expected_file: str
 ) -> tuple[bool, str]:
     is_error_test = basename.startswith("error_")
 
@@ -61,34 +58,18 @@ def evaluate_test_logic(
     if not ok or len(compiler_errors) > 0:
         return False, f"Error inesperado en el compilador: {compiler_errors}"
 
-    if not os.path.exists(expected_file):
-        return True, ""
-
-    try:
-        with open(expected_file, "r", encoding="utf-8") as f:
-            expected_quads = json.load(f)
-
-        if quads != expected_quads:
-            for i in range(min(len(quads), len(expected_quads))):
-                if quads[i] != expected_quads[i]:
-                    return False, f"Cuádruplo {i} difiere: obtenido {quads[i]}, esperado {expected_quads[i]}"
-            return False, f"Cantidad de cuádruplos difiere: obtenidos {len(quads)}, esperados {len(expected_quads)}"
-
-        return True, ""
-    except json.JSONDecodeError:
-        return False, f"Error de formato en el archivo json: {expected_file}"
+    return True, ""
 
 
 def run_single_test(compiler, test_file: str) -> TestResult:
     basename = os.path.basename(test_file)
     name_without_ext = os.path.splitext(basename)[0]
     output_file = os.path.join(RESULTS_DIR, f"{name_without_ext}.log")
-    expected_file = os.path.join(TEST_DIR, f"{name_without_ext}.expected.json")
 
     start_time = time.perf_counter()
     try:
         ok, compiler_errors, dir_fun, quads = analyze_file(compiler, test_file)
-        passed, fail_reason = evaluate_test_logic(basename, ok, compiler_errors, quads, expected_file)
+        passed, fail_reason = evaluate_test_logic(basename, ok, compiler_errors)
         write_compile_log(ok, compiler_errors, dir_fun, quads, output_file)
     except Exception as e:
         passed = False

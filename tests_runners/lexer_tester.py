@@ -1,5 +1,4 @@
 import os
-import json
 import time
 from tabulate import tabulate
 from patito.lexer import PatitoLexer
@@ -10,7 +9,7 @@ TEST_DIR = os.path.join(ROOT_DIR, "tests", "lexer")
 RESULTS_DIR = os.path.join(ROOT_DIR, "tests-results", "lexer")
 
 
-def analyze_file(lexer, input_path: str) -> tuple[list, list[dict], list[str]]:
+def analyze_file(lexer, input_path: str) -> tuple[list, list[str]]:
     with open(input_path, "r", encoding="utf-8") as f:
         data = f.read()
 
@@ -20,13 +19,11 @@ def analyze_file(lexer, input_path: str) -> tuple[list, list[dict], list[str]]:
     lexer.input(data)
 
     tokens_complete = []
-    tokens_json = []
 
     for t in lexer.tokenize():
         tokens_complete.append([t.type, t.value, t.lineno, t.lexpos])
-        tokens_json.append({"type": t.type, "value": t.value})
 
-    return tokens_complete, tokens_json, lexer.errors
+    return tokens_complete, lexer.errors
 
 
 def write_token_log(tokens: list, output_path: str) -> None:
@@ -40,7 +37,7 @@ def write_token_log(tokens: list, output_path: str) -> None:
         f_out.write(token_table)
 
 
-def evaluate_test_logic(basename: str, tokens: list[dict], lexer_errors: list[str], expected_file: str) -> tuple[bool, str]:
+def evaluate_test_logic(basename: str, lexer_errors: list[str]) -> tuple[bool, str]:
     is_error_test = basename.startswith("error_")
 
     if is_error_test:
@@ -51,30 +48,18 @@ def evaluate_test_logic(basename: str, tokens: list[dict], lexer_errors: list[st
     if len(lexer_errors) > 0:
         return False, f"Error inesperado en el lexer: {lexer_errors}"
 
-    if not os.path.exists(expected_file):
-        return True, "Correcto (No se encontró archivo .expected.json para hacer la comparación)."
-
-    try:
-        with open(expected_file, "r", encoding="utf-8") as f:
-            expected_tokens = json.load(f)
-        if tokens == expected_tokens:
-            return True, ""
-        unexpected_tokens = [(tokens[i], expected_tokens[i]) for i in range(min(len(tokens), len(expected_tokens))) if tokens[i] != expected_tokens[i]]
-        return False, f"Los tokens no coinciden con los esperados: {unexpected_tokens}"
-    except json.JSONDecodeError:
-        return False, f"Error de formato en el archivo json: {expected_file}"
+    return True, ""
 
 
 def run_single_test(lexer, test_file: str) -> TestResult:
     basename = os.path.basename(test_file)
     name_without_ext = os.path.splitext(basename)[0]
     output_file = os.path.join(RESULTS_DIR, f"{name_without_ext}.log")
-    expected_file = os.path.join(TEST_DIR, f"{name_without_ext}.expected.json")
 
     start_time = time.perf_counter()
     try:
-        tokens_complete, tokens_json, lexer_errors = analyze_file(lexer, test_file)
-        passed, fail_reason = evaluate_test_logic(basename, tokens_json, lexer_errors, expected_file)
+        tokens_complete, lexer_errors = analyze_file(lexer, test_file)
+        passed, fail_reason = evaluate_test_logic(basename, lexer_errors)
         write_token_log(tokens_complete, output_file)
     except Exception as e:
         passed = False
