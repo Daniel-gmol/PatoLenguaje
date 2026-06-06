@@ -1,4 +1,4 @@
-init complete;
+init general_test;
 val
     x, y, res : entero;
     pi, phi : decimal;
@@ -27,10 +27,10 @@ entero suma(a: entero, b: entero) {
 }
 
 arranca {
-    x = 10;
-    y = 20;
+    dame(x, y);
     pi = 3.14;
     res = x + y * 2;
+    dale(res, "\n");
 
     si (res > 30) {
         dale("Grande");
@@ -41,7 +41,6 @@ arranca {
     esperaque (x > 0) \/ {
         x = x - 1;
     }
-
     imprimeRes(res, phi);
     x = suma(x, y);
 

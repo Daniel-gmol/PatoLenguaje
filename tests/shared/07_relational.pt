@@ -1,4 +1,4 @@
-init relational;
+init rel_test;
 
 val x, y: entero;
     a, b: decimal;

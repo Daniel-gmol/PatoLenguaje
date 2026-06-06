@@ -1,4 +1,4 @@
-init division;
+init division_test;
 val
     a, b, c : entero;
     x, y, z : decimal;
@@ -12,9 +12,6 @@ arranca {
     c = 7 / 2;
     dale("7 / 2 = ", c, "\n");
 
-    c = 1 / 2;
-    dale("1 / 2 = ", c, "\n");
-
     # Float division
     x = 10.0;
     y = 3.0;
@@ -23,5 +20,8 @@ arranca {
 
     z = 7.0 / 2.0;
     dale("7.0 / 2.0 = ", z, "\n");
+
+    z = 7 / 2.0;
+    dale("7 / 2.0 = ", z, "\n");
 }
 acaba

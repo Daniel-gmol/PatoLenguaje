@@ -1,0 +1,81 @@
+init mixed_logical_test;
+val
+    a, b, r : entero;
+    x, y : decimal;
+
+arranca {
+    a = 5;
+    b = 10;
+    x = 2.5;
+    y = 7.0;
+
+    # ── Relational: entero op entero → entero ──
+    r = a > b;
+    r = a < b;
+    r = a == b;
+    r = a != b;
+    r = a >= b;
+    r = a <= b;
+
+    # ── Relational: flotante op flotante → entero ──
+    r = x > y;
+    r = x < y;
+    r = x == y;
+    r = x != y;
+    r = x >= y;
+    r = x <= y;
+
+    # ── Relational: entero op flotante → entero (mixed) ──
+    r = a > y;
+    r = a < y;
+    r = a == y;
+    r = a != y;
+    r = a >= y;
+    r = a <= y;
+
+    # ── Relational: flotante op entero → entero (mixed) ──
+    r = x > b;
+    r = x < b;
+    r = x == b;
+    r = x != b;
+    r = x >= b;
+    r = x <= b;
+
+    # ── Logical AND (yy): entero yy entero → entero ──
+    r = (a > 0) yy (b > 0);
+
+    # ── Logical AND (yy): mixed types → entero ──
+    r = (a > 0) yy (x > 0.0);
+    r = (x > 0.0) yy (b > 0);
+
+    # ── Logical OR (oo): entero oo entero → entero ──
+    r = (a == 0) oo (b == 0);
+
+    # ── Logical OR (oo): mixed types → entero ──
+    r = (a == 0) oo (x == 0.0);
+    r = (x == 0.0) oo (b == 0);
+
+    # ── Logical NOT (no): entero → entero ──
+    r = no (a > 0);
+
+    # ── Logical NOT (no): flotante comparison → entero ──
+    r = no (x > 0.0);
+
+    # ── Logical XOR (xo): entero xo entero → entero ──
+    r = (a > 0) xo (b > 0);
+
+    # ── Logical XOR (xo): mixed → entero ──
+    r = (a > 0) xo (x > 0.0);
+    r = (x > 0.0) xo (b > 0);
+
+    # ── Chained logical with mixed types ──
+    r = (a > x) yy (b < y) oo (no (a == 0));
+
+    # ── Relational result used in arithmetic context ──
+    # Since relational → entero, we can do arithmetic on it
+    r = (a > b) + (a < b);
+    r = (x > y) * 2;
+
+    dale("Mixed logical/relational tests passed\n");
+}
+acaba

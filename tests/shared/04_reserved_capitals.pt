@@ -1,0 +1,6 @@
+INIT capitals_test;
+VAL x, y : ENTERO;
+ARRANCA {
+
+}
+ACABA

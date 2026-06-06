@@ -1,4 +1,4 @@
-init logical;
+init logic_test;
     val x, y: entero;
         a, b: decimal;
 
@@ -23,7 +23,7 @@ arranca{
     x = x xo y;
 
     si(x == 10 yy y == 5){
-        dale("Swap funcino");
+        dale("Swap funciono");
     }
 
 }

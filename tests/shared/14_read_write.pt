@@ -1,4 +1,4 @@
-init io;
+init io_test;
     val x, y : decimal;
         a, b : entero;
 
@@ -8,6 +8,5 @@ arranca{
 
     dame(x, y);
     dale(x, " ", y, "\n");
-
 }
 acaba

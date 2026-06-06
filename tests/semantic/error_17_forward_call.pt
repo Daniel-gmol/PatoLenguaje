@@ -1,0 +1,14 @@
+init forward_ref_error_test;
+val result : entero;
+
+arranca {
+    result = triple(5);
+    dale(result);
+}
+acaba
+
+entero triple(n: entero) {
+    {
+        regresa n * 3;
+    }
+}

@@ -1,13 +1,9 @@
-init prog;
+init fibo_rec_test;
     val n, f : entero;
 
 entero fibo(a: entero){
     {
-        si (a < 0){
-            regresa 0;
-        }
-
-        si (a == 0){
+        si (a <= 0){
             regresa 0;
         }
 

@@ -1,0 +1,11 @@
+init fact_rec;
+val x : entero;
+
+arranca{
+    x = 100;
+    esperaque(x> 0) \/ {
+        dale(x, "\n");
+        x = x-1;
+    }
+}
+acaba

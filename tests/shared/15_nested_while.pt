@@ -1,4 +1,4 @@
-init nested_while;
+init nested_while_test;
 val
     i, j, k, count : entero;
 arranca {

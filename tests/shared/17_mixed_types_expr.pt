@@ -1,4 +1,4 @@
-init mixed_types;
+init mixed_types_test;
 val
     a, b : entero;
     x, y, z : decimal;

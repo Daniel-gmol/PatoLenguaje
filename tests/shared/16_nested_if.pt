@@ -1,8 +1,8 @@
-init nested_if;
+init nested_if_test;
 val
     x : entero;
 arranca {
-    x = 42;
+    dame(x);
     si (x > 10) {
         si (x > 20) {
             si (x > 30) {

@@ -1,4 +1,4 @@
-init complex;
+init complex_test;
 val
     a, b, c : entero;
 arranca {
@@ -7,7 +7,6 @@ arranca {
     c = ((((a + b) * (a - b)) + ((a * b) - (a / b))) * ((a + 1) * (b + 1)));
     dale(c, "\n");
 
-    # deeply nested parentheses
     c = (((((((a + b)))))));
     dale(c, "\n");
 }

@@ -1,0 +1,23 @@
+init fact_rec;
+
+entero fact(x : entero){
+    val res : entero;
+    {
+        res = 1;
+        esperaque(x > 0) \/ {
+            res = res * x; 
+            x = x - 1;
+        }
+        regresa res;
+    }
+}
+
+arranca{
+    dale("fact(0) = ", fact(0), "\n");
+    dale("fact(1) = ", fact(1), "\n");
+    dale("fact(2) = ", fact(2), "\n");
+    dale("fact(3) = ", fact(3), "\n");
+    dale("fact(4) = ", fact(4), "\n");
+    dale("fact(10) = ", fact(10), "\n");
+}
+acaba

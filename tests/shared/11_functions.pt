@@ -1,0 +1,75 @@
+init func_test;
+val g, h, i, j, k, l : entero;
+
+nil saludar() {
+    {
+        dale("Hola");
+    }
+}
+
+nil no_hacer_nada()
+{
+   {} 
+}
+
+entero suma(a: entero, b: entero) {
+    val res : entero;
+    {
+        res = a + b;
+        regresa res;
+    }
+}
+
+entero uno(uno: entero){
+    {
+        regresa 1;
+    }
+}
+
+entero dos(uno: entero, dos : entero){
+    {
+        regresa 2 * 2;
+    }
+}
+
+entero tres(){
+    {
+        regresa 4;
+    }
+}
+
+entero retornar(va: entero){
+    {
+        regresa va;
+    }
+}
+
+arranca {
+    saludar();
+    no_hacer_nada();
+
+    g = suma(3, 5);
+    dale("g: ", g, "\n");
+
+    h = suma(uno(1), dos(2,3));
+    dale("h: ", h, "\n");
+
+    i = suma(uno(dos(i, 3)), g);
+    dale("i: ", i, "\n");
+
+    j = suma(suma(g, h), 100);
+    dale("j: ", j, "\n");
+
+    k = retornar(j);
+    dale("k: ", k, "\n");
+
+    l = retornar(k) + 100;
+    dale("l: ", l, "\n");
+
+    dale("?", retornar(l + k / 2), "\n");
+
+    dale("??", tres(), "\n");
+
+    regresa nil;
+}
+acaba

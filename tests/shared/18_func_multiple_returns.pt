@@ -1,4 +1,4 @@
-init multi_ret;
+init multi_ret_test;
 
 entero abs(x: entero) {
     {

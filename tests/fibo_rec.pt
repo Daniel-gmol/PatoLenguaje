@@ -1,0 +1,19 @@
+init fibo_rec;
+
+entero fib(x : entero){
+    {
+    si (x <= 0){regresa 0;}
+    si(x == 1) {regresa 1;}
+    regresa fib(x - 1) + fib(x - 2);
+    }
+}
+
+arranca{
+    dale("fib(1) = ", fib(0), "\n");
+    dale("fib(1) = ", fib(1), "\n");
+    dale("fib(2) = ", fib(2), "\n");
+    dale("fib(3) = ", fib(3), "\n");
+    dale("fib(4) = ", fib(4), "\n");
+    dale("fib(10) = ", fib(10), "\n");
+}
+acaba
